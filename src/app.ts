@@ -1,7 +1,7 @@
 import express from "express";
 import buildDatabase from "./DataBaseConnection";
 require("dotenv").config();
-
+const bodyParser = require('body-parser');
 import swaggerUi from "swagger-ui-express";
 import swaggerJsdoc from "swagger-jsdoc";
 import TestSuiteRoutes from "./routes/TestSuiteRoutes";
@@ -22,7 +22,7 @@ export function createApp() {
   app.use(express.json({
     
   }));
-
+  app.use(bodyParser.json());
   app.use(TestSuiteRoutes);
   app.use(testCaseRouter);
   app.use(validationTagRouter);

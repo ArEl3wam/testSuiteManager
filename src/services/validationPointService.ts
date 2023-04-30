@@ -1,6 +1,7 @@
 import { ObjectId, Types } from "mongoose";
 import validationPointModel from "../model/ValidationPoint";
-
+import {ValidationPointResultInterface } from '../interfaces/ValidationPointResultInterface';
+import express from 'express'
 
 
 export async function listValidationPoints(listingOptions: any) {
@@ -97,3 +98,23 @@ const groupStage = (groupBy: object | string, pushKeys: object) => {
             }
         }
 }
+
+
+export async function parseValidationPointResults(requestBody: object): Promise<ValidationPointResultInterface[] | null> {
+    const validationPointResults: ValidationPointResultInterface[] = [];
+  
+    for (let key in requestBody) {
+      if (requestBody.hasOwnProperty(key)) {
+        const vp: ValidationPointResultInterface = {
+          name: key,
+          status: (requestBody as { [key: string]: any })[key].status,
+          expected: (requestBody as { [key: string]: any })[key].expected,
+          actual: (requestBody as { [key: string]: any })[key].actual,
+          tolerance: (requestBody as { [key: string]: any })[key].tolerance,
+        };
+        validationPointResults.push(vp);
+      }
+    }
+  
+    return validationPointResults.length > 0 ? validationPointResults : null;
+  }
