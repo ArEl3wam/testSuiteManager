@@ -1,4 +1,5 @@
 import mongoose, { Types } from 'mongoose';
+import { ValidationPointResultInterface } from '../interfaces/ValidationPointResultInterface';
 const Schema = mongoose.Schema;
 const model = mongoose.model;
 
@@ -11,7 +12,7 @@ const validationPointSchema = new Schema<ValidationPointBase>({
     type: {
         type: Schema.Types.String,
         default: "", //! Modify to the most frequent type
-        required: true
+        required: false
     },
     parent: {
         validationTag: {
@@ -40,9 +41,9 @@ const validationPointSchema = new Schema<ValidationPointBase>({
     levelsOrder: {
         type: [String],
     },
-    body:{
-        type: Schema.Types.Mixed,
-        default: {},
+    results:{
+        type: [Object],
+        // default: {},
         required: true 
     }
 });
@@ -63,8 +64,13 @@ interface ValidationPointBase {
             id: Types.ObjectId
         }
     },
-    body: object
+    results: ValidationPointResultInterface[]
 }
 
 const validationPointModel = model<ValidationPointBase>('validationPoint', validationPointSchema);
 export default validationPointModel;
+
+
+const ValidationPoint = model('validationPoint', validationPointSchema);
+module.exports = { ValidationPoint, validationPointModel };
+
