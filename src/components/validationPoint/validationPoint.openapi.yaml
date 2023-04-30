@@ -1,0 +1,39 @@
+paths:
+  /validationPoints/:
+    get:                 
+      tags:               
+        - Validation Point         
+      summary: lists validation points
+      produces:
+      - application/json
+      parameters:         
+      - in: query
+        name: limit
+        schema: 
+          type: integer
+        description: limit number of entities
+      - in: query
+        name: skip
+        schema: 
+          type: integer
+        description: skip number of entities
+      - in: query
+        name: isSuccessful
+        schema: 
+          type: boolean
+      - in: query
+        name: validationTag.id
+        schema:
+          type: string
+        
+      responses:      
+        200:
+          description: list of validation points
+      #     content:
+      #       application/json:
+      #         schema:
+      #           type: array
+      #           items:
+            #       $ref: '#/definitions/testCaseResponse'
+# definitions:        # Schema defination for request body
+#   validationPointResponse:

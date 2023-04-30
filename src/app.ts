@@ -8,6 +8,7 @@ import TestSuiteRoutes from "./routes/TestSuiteRoutes";
 import { testCaseRouter }  from "./routes/testCaseRoutes";
 import { validationTagRouter } from "./routes/validationTagRoutes";
 import qs from 'qs'
+import { valdationPointRouter } from "./routes/validationPointRoutes";
 export function createApp() {
   const app = express();
 
@@ -25,6 +26,7 @@ export function createApp() {
   app.use(TestSuiteRoutes);
   app.use(testCaseRouter);
   app.use(validationTagRouter);
+  app.use(valdationPointRouter)
   
   const options = {
     definition: {

@@ -33,6 +33,13 @@ const validationPointSchema = new Schema<ValidationPointBase>({
             }
         }
     },
+    levels: {
+        type: Schema.Types.Mixed,
+        default: {}
+    },
+    levelsOrder: {
+        type: [String],
+    },
     body:{
         type: Schema.Types.Mixed,
         default: {},
@@ -43,6 +50,8 @@ const validationPointSchema = new Schema<ValidationPointBase>({
 interface ValidationPointBase {
     metaData: object,
     type: string,
+    levels: object,
+    levelsOrder: string[],
     parent: {
         validationTag: {
             id: Types.ObjectId
