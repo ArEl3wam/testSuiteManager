@@ -67,7 +67,7 @@ interface ValidationPointBase {
     results: ValidationPointResultInterface[]
 }
 
-const validationPointModel = model<ValidationPointBase>('validationPoint', validationPointSchema);
+export const validationPointModel = model<ValidationPointBase>('validationPoint', validationPointSchema);
 export default validationPointModel;
 
 

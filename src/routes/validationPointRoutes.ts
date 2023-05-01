@@ -5,4 +5,4 @@ export const valdationPointRouter = Router()
 
 
 valdationPointRouter.get('/validationPoints', listingValidationPoint);
-valdationPointRouter.post('/TesSuite/:testSuiteId/TestCase/:testCaseId/ValidationTag/:validationTagId/ValidationPoint', addValidationTag);
+valdationPointRouter.post('/TestSuite/:testSuiteId/TestCase/:testCaseId/ValidationTag/:validationTagId/ValidationPoint', addValidationTag);

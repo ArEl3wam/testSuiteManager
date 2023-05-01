@@ -1,7 +1,7 @@
 import { ObjectId, Types } from "mongoose";
-import validationPointModel from "../model/ValidationPoint";
+import { validationPointModel } from "../model/ValidationPoint";
 import {ValidationPointResultInterface } from '../interfaces/ValidationPointResultInterface';
-import express from 'express'
+
 
 
 export async function listValidationPoints(listingOptions: any) {
@@ -20,8 +20,24 @@ export async function listValidationPoints(listingOptions: any) {
     }
 
     const levels = (validationPoint.levelsOrder) as any
+    const [{ deepestLevels }] = await validationPointModel.aggregate([
+        {
+            '$match': {
+                'parent.validationTag.id': new Types.ObjectId(validationTag.id)
+            }
+        },
+        {
+            '$group': {
+                '_id': null,
+                'deepestLevels': {
+                    '$max': '$levelsOrder'
+                }
+            }
+        }
+    ])
 
-    const query = generateAggregationQuery(levels)
+    console.log(deepestLevels, levels)
+    const query = generateAggregationQuery(deepestLevels.length)
     console.dir(query, {depth: Infinity})
     const validationPoints = await validationPointModel.aggregate([
         {
@@ -32,11 +48,15 @@ export async function listValidationPoints(listingOptions: any) {
         ...query
     ])
 
-    return { data: validationPoints }
+    return { data: fixOut(validationPoints) }
 }
 
 
-function generateAggregationQuery(levelsOrder: any[]) {
+function generateAggregationQuery(levelsLength: number) {
+    const levelsOrder: number[] = [];
+    for(let i = 0; i < levelsLength; ++i) {
+        levelsOrder.push(i)
+    }
     const levels: any = levelsOrder.reduce((acc, cur) => {
         Object.assign(acc, {
             [cur]: `$_id.${cur}`
@@ -99,6 +119,27 @@ const groupStage = (groupBy: object | string, pushKeys: object) => {
         }
 }
 
+const fixOut = (nestedLevels: any[]) => {
+
+    return nestedLevels.flatMap((level) =>  {
+        const newLevel = {}
+        const keys = Object.keys(level)
+        if (keys.length == 2 && keys.includes('children')) {
+            const levelname: string = level[keys[0] != 'children' ? keys[0] : keys[1]]
+            const [newKey, newValue] = levelname.split(':')
+            Object.assign(newLevel, {
+                children: fixOut(level.children),
+                [newKey]: newValue
+            })
+        } else if (keys.includes('children')) {
+            return level.children
+        } else {
+            return level
+        }
+
+        return newLevel
+    })
+}
 
 export async function parseValidationPointResults(requestBody: object): Promise<ValidationPointResultInterface[] | null> {
     const validationPointResults: ValidationPointResultInterface[] = [];

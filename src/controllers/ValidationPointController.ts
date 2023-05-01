@@ -18,7 +18,21 @@ export async function addValidationTag(req: express.Request, res: express.Respon
         testCase: { id: testCaseId},
         testSuite: {id: testSuiteId}
     }
-    vp.results=await parseValidationPointResults(req.body);
+    const levels: any[]= req.body.levels
+
+    const levelOrder = []
+    const modifiedLevels = {}
+
+    for (let i = 0; i < levels.length; ++i) {
+        const [key, value] = Object.entries(levels[i])[0]
+        levelOrder.push(key)
+        Object.assign(modifiedLevels, {
+            [i]: `${key}:${value}`
+        })
+    }
+    vp.levelsOrder = levelOrder
+    vp.levels = modifiedLevels
+    vp.results=await parseValidationPointResults(req.body.results);
     if(!vp.results) {
         return res.status(400).json({ message: "Invalid results" });
     }
