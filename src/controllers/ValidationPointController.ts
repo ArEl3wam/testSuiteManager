@@ -30,6 +30,7 @@ export async function addValidationTag(req: express.Request, res: express.Respon
             [i]: `${key}:${value}`
         })
     }
+    vp.metaData= req.body.metaData;
     vp.levelsOrder = levelOrder
     vp.levels = modifiedLevels
     vp.results=await parseValidationPointResults(req.body.results);
