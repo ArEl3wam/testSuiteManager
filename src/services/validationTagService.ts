@@ -113,21 +113,24 @@ export async function addValidationTagToTestSuite(testSuiteId: string, validatio
 }
 
 export async function getValidationTag(validationTagId: string) {
-    // Check if validation tag exists
-    const validationTag = await validationTagModel.findById(validationTagId, { __v: false }).exec();
+    const validationTag = await validationTagModel
+        .findById(validationTagId, { __v: false })
+        .populate('validationPointRefs', { __v: false })
+        .exec();
+
     if (!validationTag) {
         throw new NotFoundError(`Validation tag with id '${validationTagId}' was not found!`);
     }
 
-    // Get all validation points documents from given references and add them to the returned object
-    const validationPoints = await validationPointModel.find({ _id: { $in: validationTag.validationPointRefs } }, { __v: false });
-    if (!validationPoints) {
-        throw new NotFoundError(`Validation point was not found!`);
-    }
+    const validationPointsWith_id = validationTag.validationPointRefs;
 
-    // Remove validationPointRefs from the returned object
     let validationTagObj: any = validationTag.toJSON();
     validationTagObj.validationPointRefs = undefined;
+
+    // convert _id to id for each validation point
+    const validationPoints = validationPointsWith_id.map(
+        (validationPoint: any) => _idToid(validationPoint.toJSON())
+    );
 
     return _idToid({ ...validationTagObj, validationPoints });
 }
@@ -181,11 +184,16 @@ export async function getValidationTags(filters: ValidationTagListingOptions) {
 
         return validationTags.map((validationTag) => {
             // validationPointRefs are now populated and become the actual validation points
-            const validationPoints = validationTag.validationPointRefs;
+            const validationPointsWith_id = validationTag.validationPointRefs;
 
             // Remove validationPointRefs from the returned object
             let validationTagObj: any = validationTag.toJSON();
             validationTagObj.validationPointRefs = undefined;
+
+            // convert _id to id for each validation point
+            const validationPoints = validationPointsWith_id.map(
+                (validationPoint: any) => _idToid(validationPoint.toJSON())
+            );
 
             return _idToid({ ...validationTagObj, validationPoints });
         });
@@ -244,11 +252,16 @@ export async function getValidationTagsForTestCase(filters: ValidationTagListing
 
         return validationTags.map((validationTag) => {
             // validationPointRefs are now populated and become the actual validation points
-            const validationPoints = validationTag.validationPointRefs;
+            const validationPointsWith_id = validationTag.validationPointRefs;
 
             // Remove validationPointRefs from the returned object
             let validationTagObj: any = validationTag.toJSON();
             validationTagObj.validationPointRefs = undefined;
+
+            // convert _id to id for each validation point
+            const validationPoints = validationPointsWith_id.map(
+                (validationPoint: any) => _idToid(validationPoint.toJSON())
+            );
 
             return _idToid({ ...validationTagObj, validationPoints });
         });
@@ -306,11 +319,16 @@ export async function getValidationTagsForTestSuite(filters: ValidationTagListin
 
         return validationTags.map((validationTag) => {
             // validationPointRefs are now populated and become the actual validation points
-            const validationPoints = validationTag.validationPointRefs;
+            const validationPointsWith_id = validationTag.validationPointRefs;
 
             // Remove validationPointRefs from the returned object
             let validationTagObj: any = validationTag.toJSON();
             validationTagObj.validationPointRefs = undefined;
+
+            // convert _id to id for each validation point
+            const validationPoints = validationPointsWith_id.map(
+                (validationPoint: any) => _idToid(validationPoint.toJSON())
+            );
 
             return _idToid({ ...validationTagObj, validationPoints });
         });
