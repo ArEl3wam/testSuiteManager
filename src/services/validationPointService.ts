@@ -36,7 +36,7 @@ export async function listValidationPoints(listingOptions: any) {
         }
     ])
 
-    console.log(deepestLevels, levels)
+    //console.log(deepestLevels, levels)
     const query = generateAggregationQuery(deepestLevels.length)
     console.dir(query, {depth: Infinity})
     const validationPoints = await validationPointModel.aggregate([

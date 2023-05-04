@@ -65,7 +65,7 @@ export async function fetchValidationTag(req: express.Request, res: express.Resp
 }
 
 export async function fetchValidationTags(req: express.Request, res: express.Response) {
-    console.log(req.query)
+   // console.log(req.query)
     const filters: ValidationTagListingOptions = req.query;
     try {
         const validationTags = await getValidationTags(filters);
@@ -81,7 +81,7 @@ export async function fetchValidationTags(req: express.Request, res: express.Res
 }
 
 export async function fetchValidationTagsForTestCase(req: express.Request, res: express.Response) {
-    console.log(req.query)
+    //(req.query)
     const filters: ValidationTagListingOptions = req.query;
 
     try {
@@ -98,7 +98,7 @@ export async function fetchValidationTagsForTestCase(req: express.Request, res: 
 }
 
 export async function fetchValidationTagsForTestSuite(req: express.Request, res: express.Response) {
-    console.log(req.query)
+    //console.log(req.query)
     const filters: ValidationTagListingOptions = req.query;
 
     try {

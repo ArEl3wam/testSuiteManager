@@ -45,7 +45,7 @@ export async function insertValidationTagForTestCase(testSuiteId: string, testCa
         validationTag.__v = undefined;
         const { validationPointRefs, ...validationTagReturned } = validationTag.toJSON();
 
-        console.log(validationTagReturned);
+        //console.log(validationTagReturned);
         validationTagId = validationTagReturned._id;
 
         // Add validation tag id to test case in the database
@@ -83,7 +83,7 @@ export async function insertValidationTagForTestSuite(testSuiteId: string, valid
         validationTag.__v = undefined;
         const { validationPointRefs, ...validationTagReturned } = validationTag.toJSON();
 
-        console.log(validationTagReturned);
+        //console.log(validationTagReturned);
         validationTagId = validationTagReturned._id;
 
         // Add validation tag id to test suite in the database
@@ -159,7 +159,7 @@ export async function getValidationTags(filters: ValidationTagListingOptions) {
         }
 
         const dotNotationOptions = flattenObject(options);
-        console.log(dotNotationOptions)
+        //console.log(dotNotationOptions)
 
         // Get all validation tags, with validationPointRefs substituted with their actual documents
         const query = validationTagModel
@@ -222,7 +222,7 @@ export async function getValidationTagsForTestCase(filters: ValidationTagListing
 
         Object.assign(dotNotationOptions, { 'parent.testCase': { $exists: true } });
 
-        console.log(dotNotationOptions)
+       // console.log(dotNotationOptions)
 
         // Get all validation tags, with validationPointRefs substituted with their actual documents
         const query = validationTagModel
@@ -284,7 +284,7 @@ export async function getValidationTagsForTestSuite(filters: ValidationTagListin
 
         Object.assign(dotNotationOptions, { 'parent.testCase': { $exists: false } });
 
-        console.log(dotNotationOptions)
+        //console.log(dotNotationOptions)
 
         // Get all validation tags, with validationPointRefs substituted with their actual documents
         const query = validationTagModel
