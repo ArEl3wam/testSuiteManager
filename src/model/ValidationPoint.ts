@@ -9,11 +9,11 @@ const validationPointSchema = new Schema<ValidationPointBase>({
         default: {},
         required: true
     },
-    type: {
-        type: Schema.Types.String,
-        default: "", //! Modify to the most frequent type
-        required: false
-    },
+    // type: {
+    //     type: Schema.Types.String,
+    //     default: "", //! Modify to the most frequent type
+    //     required: false
+    // },
     parent: {
         validationTag: {
             id: {
@@ -36,10 +36,16 @@ const validationPointSchema = new Schema<ValidationPointBase>({
     },
     levels: {
         type: Schema.Types.Mixed,
-        default: {}
+        default: {},
+    },
+    modifiedLevels: {
+        type: Schema.Types.Mixed,
+        default: {},
+        select: false
     },
     levelsOrder: {
         type: [String],
+        select: false
     },
     results:{
         type: [Object],
@@ -50,9 +56,10 @@ const validationPointSchema = new Schema<ValidationPointBase>({
 
 interface ValidationPointBase {
     metaData: object,
-    type: string,
+    // type: string,
     levels: object,
     levelsOrder: string[],
+    modifiedLevels: object
     parent: {
         validationTag: {
             id: Types.ObjectId

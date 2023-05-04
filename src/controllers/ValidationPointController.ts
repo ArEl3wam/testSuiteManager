@@ -1,5 +1,5 @@
 import express from 'express'
-import { listValidationPoints, parseValidationPointResults } from '../services/validationPointService'
+import { addValidationPointToValidationTag, listValidationPoints, parseValidationPointResults } from '../services/validationPointService'
 const ValidationPoint = require('../model/ValidationPoint').ValidationPoint;
 
 
@@ -31,13 +31,18 @@ export async function addValidationTag(req: express.Request, res: express.Respon
         })
     }
     vp.levelsOrder = levelOrder
-    vp.levels = modifiedLevels
-    vp.results=await parseValidationPointResults(req.body.results);
+    vp.modifiedLevels = modifiedLevels
+    vp.levels = levels.reduce((acc, cur) => {
+        return Object.assign(acc, cur)
+    }, {})
+    vp.results= await parseValidationPointResults(req.body.results);
+    vp.metaData = req.body.metaData
     if(!vp.results) {
         return res.status(400).json({ message: "Invalid results" });
     }
     
-    await vp.save().then(() => {
+    await vp.save().then(async () => {
+        await addValidationPointToValidationTag(validationTagId, { id: vp._id })
         return res.status(201).json(vp);
     }).catch((err: any) => {    
         return res.status(400).json({ message: err.message });

@@ -1,6 +1,8 @@
 import { ObjectId, Types } from "mongoose";
 import { validationPointModel } from "../model/ValidationPoint";
 import {ValidationPointResultInterface } from '../interfaces/ValidationPointResultInterface';
+import { LinkingResourcesError } from "../shared/errors";
+import validationTagModel from "../model/ValidationTag";
 
 
 
@@ -68,7 +70,7 @@ function generateAggregationQuery(levelsLength: number) {
     const pipeline: any[] = []
     for(let i = 0; i < levelsOrder.length; ++i) {
         if (i == 0) {
-            pipeline.push(groupStage('$levels', { 
+            pipeline.push(groupStage('$modifiedLevels', { 
                 metaData: '$metaData',
                 results: '$results'
                 })
@@ -158,4 +160,18 @@ export async function parseValidationPointResults(requestBody: object): Promise<
     }
   
     return validationPointResults.length > 0 ? validationPointResults : null;
-  }
+}
+
+export async function addValidationPointToValidationTag(validationTagId: string, validationPoint: { id?: Types.ObjectId, _id?: Types.ObjectId } ) {
+    try {
+        await validationTagModel.findByIdAndUpdate(validationTagId, {
+            $push: {
+                validationPointRefs: (validationPoint.id) ? validationPoint.id : validationPoint._id
+            }
+        }).orFail()
+        
+    } catch (err: unknown) {
+        console.log(err)
+        throw new LinkingResourcesError(`Couldn't link validation point to validation tag with id '${validationTagId}'`)
+    }
+}
