@@ -1,5 +1,6 @@
 import express from 'express';
 const TestSuite = require('../model/TestSuite').TestSuite;
+import { _idToid } from "../shared/utils";
 
 
 export async function getTestSuiteById(request: express.Request, response: express.Response) {
@@ -7,7 +8,9 @@ export async function getTestSuiteById(request: express.Request, response: expre
     try {
         const filter= {"_id": id};
         const testSuiteToSend = await TestSuite.findOne(filter);
-        return response.json(testSuiteToSend);
+        const transformedTestSuite =_idToid(testSuiteToSend.toJSON());
+        return response.json(transformedTestSuite);
+        
     } catch (err: any) {
         return response.status(500).json({ message: err.message });
     }
@@ -32,7 +35,9 @@ export async function getAllTestSuites(request: express.Request, response: expre
         .skip((page - 1) * limit)
         .limit(limit);
 
-        return response.json(testSuites);
+        const transformedTestSuites = testSuites.map((ts:typeof TestSuite) => _idToid<typeof TestSuite>(ts.toJSON()));
+        return response.json(transformedTestSuites);
+
     } catch (err: any) {
         response.status(500).json({ message: err.message });
     }
@@ -41,10 +46,10 @@ export async function getAllTestSuites(request: express.Request, response: expre
 export async function addTestSuite(request: express.Request, response: express.Response) {
     try {
         const testSuite = await new TestSuite(request.body);
-        // console.log("testSuite",testSuite);
-
         const newTestSuite = await testSuite.save();
-        return response.status(201).json(newTestSuite);
+        const transformedTestSuite =_idToid(newTestSuite.toJSON());
+
+        return response.status(201).json(transformedTestSuite);
     } catch (err: any) {
         return response.status(400).json({ message: err.message });
     }   
