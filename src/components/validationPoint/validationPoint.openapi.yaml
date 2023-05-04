@@ -1,39 +1,71 @@
 paths:
   /validationPoints/:
-    get:                 
-      tags:               
-        - Validation Point         
+    get:
+      tags:
+        - Validation Point
       summary: lists validation points
       produces:
-      - application/json
-      parameters:         
-      - in: query
-        name: limit
-        schema: 
-          type: integer
-        description: limit number of entities
-      - in: query
-        name: skip
-        schema: 
-          type: integer
-        description: skip number of entities
-      - in: query
-        name: isSuccessful
-        schema: 
-          type: boolean
-      - in: query
-        name: validationTag.id
-        schema:
-          type: string
-        
-      responses:      
+        - application/json
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: limit number of entities
+        - in: query
+          name: skip
+          schema:
+            type: integer
+          description: skip number of entities
+        - in: query
+          name: isSuccessful
+          schema:
+            type: boolean
+        - in: query
+          name: validationTag.id
+          schema:
+            type: string
+      responses:
         200:
           description: list of validation points
-      #     content:
-      #       application/json:
-      #         schema:
-      #           type: array
-      #           items:
-            #       $ref: '#/definitions/testCaseResponse'
-# definitions:        # Schema defination for request body
-#   validationPointResponse:
+
+  /TestSuite/{testSuiteId}/TestCase/{testCaseId}/ValidationTag/{validationTagId}/ValidationPoint:
+    post:
+      tags:
+        - Validation Point
+      summary: Creates a new validation point
+      produces:
+        - application/json
+      parameters:
+        - in: path 
+          name: testCaseId
+          schema:
+            type: string
+        - in: path
+          name: testSuiteId
+          schema:
+            type: String
+        - in: path
+          name: validationTagId
+          schema:
+            type: String
+      requestBody:
+        description:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/definitions/validationPoint'
+      responses:
+        201:
+          description:  validation point  is created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/validationTagOnTestSuite'
+        500:
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/definitions/'
