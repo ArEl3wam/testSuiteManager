@@ -32,7 +32,8 @@ const validationPointSchema = new Schema<ValidationPointBase>({
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'testSuite'
             }
-        }
+        },
+        
     },
     levels: {
         type: Schema.Types.Mixed,
@@ -51,6 +52,10 @@ const validationPointSchema = new Schema<ValidationPointBase>({
         type: [Object],
         // default: {},
         required: true 
+    },
+    isSuccessful: {
+        type: Schema.Types.Boolean,
+        default: true
     }
 });
 
@@ -71,7 +76,8 @@ interface ValidationPointBase {
             id: Types.ObjectId
         }
     },
-    results: ValidationPointResultInterface[]
+    results: ValidationPointResultInterface[],
+    isSuccessful: boolean
 }
 
 export const validationPointModel = model<ValidationPointBase>('validationPoint', validationPointSchema);
@@ -80,4 +86,6 @@ export default validationPointModel;
 
 const ValidationPoint = model('validationPoint', validationPointSchema);
 module.exports = { ValidationPoint, validationPointModel };
+
+
 

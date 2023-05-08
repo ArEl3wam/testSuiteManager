@@ -1,7 +1,7 @@
 import { ObjectId, Types } from "mongoose";
 import { validationPointModel } from "../model/ValidationPoint";
-import {ValidationPointResultInterface } from '../interfaces/ValidationPointResultInterface';
-import { LinkingResourcesError } from "../shared/errors";
+import {ValidationPointResultInterface, ValidationPointUpdate } from '../interfaces/ValidationPointResultInterface';
+import { LinkingResourcesError, NotFoundError } from "../shared/errors";
 import validationTagModel from "../model/ValidationTag";
 
 
@@ -173,5 +173,20 @@ export async function addValidationPointToValidationTag(validationTagId: string,
     } catch (err: unknown) {
         console.log(err)
         throw new LinkingResourcesError(`Couldn't link validation point to validation tag with id '${validationTagId}'`)
+    }
+}
+
+
+export async function updateValdationPoint(validationPointId: string, updateInfo: ValidationPointUpdate | undefined) {
+
+    try {
+        if(!updateInfo) return
+        const { isSuccessful } = updateInfo
+
+        const validationPoint = await validationPointModel.findByIdAndUpdate(validationPointId, updateInfo, { new: true, select: '-__v' })
+        if(!validationPoint) throw new NotFoundError('ValidationPoint Not found')
+        return validationPoint
+    } catch (err: unknown) {
+        throw err
     }
 }
