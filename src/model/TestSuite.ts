@@ -18,6 +18,6 @@ const testSuiteSchema = new Schema({
 
 });
 
-const TestSuite = model('testSuite', testSuiteSchema);
+export const testSuiteModel = model('testSuite', testSuiteSchema);
 // export default TestSuite;
-module.exports = { TestSuite };
+module.exports = { testSuiteModel };
