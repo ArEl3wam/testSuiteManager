@@ -1,0 +1,65 @@
+openapi: 3.0.0
+info:
+  title: Database URL API
+  version: 1.0.0
+paths:
+  /database/urls:
+    post:
+      tags:            
+        - Database 
+      summary:  open database connection 
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                databaseUrl:
+                  type: string
+              example:
+                databaseUrl: "mongodb+srv://salah:AsuBank123@cluster0.jeljdqg.mongodb.net/Siemens"
+      responses:
+        '200':
+          description: Successfully open the database connection 
+        '400':
+          description: Invalid database url 
+  # /database/urls:
+    delete:
+      tags:            
+        - Database 
+      summary:  close database connection 
+      
+      responses:
+        '200':
+          description: Successfully closed the database connection 
+        '400':
+          description: server error
+    get:
+      tags:            
+        - Database 
+      summary:  get all database urls 
+      
+      responses:
+        '200':
+          description: Successfully read the .env file
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllDatabaseUrls'        
+        '400':
+          description: server error
+
+components:
+  schemas:
+    AllDatabaseUrls:
+      type: array
+      items:
+        type: object
+        properties:
+          databaseUrl:
+            type: string
+        example:
+          - databaseUrl: "mongodb+srv://salah:AsuBank123@cluster0.jeljdqg.mongodb.net/test"
+          - databaseUrl: "another_database_url"
+          - databaseUrl: "yet_another_database_url"
