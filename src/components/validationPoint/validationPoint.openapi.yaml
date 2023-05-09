@@ -29,6 +29,35 @@ paths:
         200:
           description: list of validation points
 
+  /validationPoints/{validationPointId}:
+    patch:
+      tags:
+        - Validation Point
+      summary: update validation point
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: validationPointId
+          schema:
+            type: string
+            required: true
+            description: validation point id
+
+      requestBody:
+        name: update test case     
+        description: It enables a user to update a testCase
+        required: True
+        content:
+          application/json:
+            schema:          
+              $ref: '#/definitions/updateValidationPoint' 
+      responses:
+        200:
+          description: validation point
+
+
+
   /TestSuite/{testSuiteId}/TestCase/{testCaseId}/ValidationTag/{validationTagId}/ValidationPoint:
     post:
       tags:
@@ -69,3 +98,11 @@ paths:
             application/json:
               schema:
                 $ref: '#/definitions/'
+
+definitions:
+  updateValidationPoint:
+    type: object
+    properties:
+      isSuccessful:
+        type: boolean
+        default: false

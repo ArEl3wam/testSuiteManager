@@ -5,3 +5,7 @@ export interface ValidationPointResultInterface {
     actual:any,
     tolerance:any,
 }
+
+export interface ValidationPointUpdate {
+    isSuccessful: boolean
+}

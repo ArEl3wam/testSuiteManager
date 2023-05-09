@@ -1,0 +1,23 @@
+paths:
+  /search/:
+    get:                 
+      tags:            
+        - Search         
+      summary: Search through all resources
+      produces:
+      - application/json
+      parameters:    
+      - in: query
+        name: select
+        description: select root resource
+        schema: 
+          type: string
+          example: TS
+
+      responses:      
+        200:
+          description: An object with testCase details
+          content:
+            application/json:
+              schema:
+                type: string

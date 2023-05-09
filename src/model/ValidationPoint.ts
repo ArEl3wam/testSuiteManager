@@ -9,11 +9,11 @@ const validationPointSchema = new Schema<ValidationPointBase>({
         default: {},
         required: true
     },
-    type: {
-        type: Schema.Types.String,
-        default: "", //! Modify to the most frequent type
-        required: false
-    },
+    // type: {
+    //     type: Schema.Types.String,
+    //     default: "", //! Modify to the most frequent type
+    //     required: false
+    // },
     parent: {
         validationTag: {
             id: {
@@ -32,27 +32,39 @@ const validationPointSchema = new Schema<ValidationPointBase>({
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'testSuite'
             }
-        }
+        },
+        
     },
     levels: {
         type: Schema.Types.Mixed,
-        default: {}
+        default: {},
+    },
+    modifiedLevels: {
+        type: Schema.Types.Mixed,
+        default: {},
+        select: false
     },
     levelsOrder: {
         type: [String],
+        select: false
     },
     results:{
         type: [Object],
         // default: {},
         required: true 
+    },
+    isSuccessful: {
+        type: Schema.Types.Boolean,
+        default: true
     }
 });
 
 interface ValidationPointBase {
     metaData: object,
-    type: string,
+    // type: string,
     levels: object,
     levelsOrder: string[],
+    modifiedLevels: object
     parent: {
         validationTag: {
             id: Types.ObjectId
@@ -64,7 +76,8 @@ interface ValidationPointBase {
             id: Types.ObjectId
         }
     },
-    results: ValidationPointResultInterface[]
+    results: ValidationPointResultInterface[],
+    isSuccessful: boolean
 }
 
 export const validationPointModel = model<ValidationPointBase>('validationPoint', validationPointSchema);
@@ -73,4 +86,6 @@ export default validationPointModel;
 
 const ValidationPoint = model('validationPoint', validationPointSchema);
 module.exports = { ValidationPoint, validationPointModel };
+
+
 
