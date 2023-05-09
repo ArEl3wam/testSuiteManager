@@ -1,15 +1,22 @@
 const mongoose=require('mongoose');
 
 
-async function buildDatabase() {
-    return mongoose.connect(process.env['dbURI'], { useNewUrlParser: true, useUnifiedTopology: true })
+export async function buildDatabase(databaseUrl:string) {
+    return mongoose.connect(databaseUrl, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
-        console.log("connected to db");
+        console.log("connected to db ", databaseUrl);
     })
     .catch((err:string) => {
         console.log("Connection Error with the database: "+err);
     });
 
 }
-
-export default buildDatabase;
+export async function closeDatabase() {
+    return mongoose.disconnect()
+    .then(() => {
+        console.log("disconnected from db ");
+    })
+    .catch((err:string) => {
+        console.log("Disconnection Error with the database: "+err);
+    });
+}
