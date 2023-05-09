@@ -4,7 +4,8 @@ import testCaseModel from "../model/TestCase";
 import { validationPointModel } from "../model/ValidationPoint";
 import validationTagModel from "../model/ValidationTag";
 import { flattenObject } from "../shared/utils";
-import { testSuiteModel } from "../model/TestSuite";
+const testSuiteModel = require('../model/TestSuite').testSuiteModel;
+
 
 
 enum ResourcesOrder {

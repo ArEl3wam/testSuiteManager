@@ -19,5 +19,5 @@ const testSuiteSchema = new Schema({
 });
 
 export const testSuiteModel = model('testSuite', testSuiteSchema);
-// export default TestSuite;
+// export default testSuiteModel;
 module.exports = { testSuiteModel };

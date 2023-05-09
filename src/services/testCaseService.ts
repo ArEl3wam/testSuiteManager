@@ -3,7 +3,7 @@ import { TestCaseInsertion, TestCaseListingOptions, TestCaseUpdate } from "../in
 import testCaseModel from "../model/TestCase";
 import { LinkingResourcesError, NotFoundError } from "../shared/errors";
 import { _idToid } from "../shared/utils";
-const TestSuite = require('../model/TestSuite').TestSuite;
+const testSuiteModel = require('../model/TestSuite').testSuiteModel;
 
 
 export async function getTestCaseById(testCaseId: string) {
@@ -47,7 +47,7 @@ export async function insertTestCase(testSuiteId: string, testCaseInfo: TestCase
 
 export async function addTestCaseToTestSuite(testSuiteId: string, testCase: { id?: Types.ObjectId, _id?: Types.ObjectId } ) {
     try {
-        await TestSuite.findByIdAndUpdate(testSuiteId, {
+        await testSuiteModel.findByIdAndUpdate(testSuiteId, {
             $push: {
                 testCaseRef: (testCase.id) ? testCase.id : testCase._id
             }

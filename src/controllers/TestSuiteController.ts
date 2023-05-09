@@ -1,5 +1,5 @@
 import express from 'express';
-const TestSuite = require('../model/TestSuite').TestSuite;
+const testSuiteModel = require('../model/TestSuite').testSuiteModel;
 import { _idToid } from "../shared/utils";
 
 
@@ -7,7 +7,7 @@ export async function getTestSuiteById(request: express.Request, response: expre
     const id = request.params.id;
     try {
         const filter= {"_id": id};
-        const testSuiteToSend = await TestSuite.findOne(filter);
+        const testSuiteToSend = await testSuiteModel.findOne(filter);
         const transformedTestSuite =_idToid(testSuiteToSend.toJSON());
         return response.json(transformedTestSuite);
         
@@ -31,11 +31,11 @@ export async function getAllTestSuites(request: express.Request, response: expre
                 delete queryObject[key];
             }
         }
-        const testSuites = await TestSuite.find(queryObject)
+        const testSuites = await testSuiteModel.find(queryObject)
         .skip((page - 1) * limit)
         .limit(limit);
 
-        const transformedTestSuites = testSuites.map((ts:typeof TestSuite) => _idToid<typeof TestSuite>(ts.toJSON()));
+        const transformedTestSuites = testSuites.map((ts:typeof testSuiteModel) => _idToid<typeof testSuiteModel>(ts.toJSON()));
         return response.json(transformedTestSuites);
 
     } catch (err: any) {
@@ -45,7 +45,7 @@ export async function getAllTestSuites(request: express.Request, response: expre
 
 export async function addTestSuite(request: express.Request, response: express.Response) {
     try {
-        const testSuite = await new TestSuite(request.body);
+        const testSuite = await new testSuiteModel(request.body);
         const newTestSuite = await testSuite.save();
         const transformedTestSuite =_idToid(newTestSuite.toJSON());
 
@@ -59,7 +59,7 @@ export async function updateTestSuiteById(request: express.Request, response: ex
     const id = request.params.id;
     const filter= {"_id": id};
     const update = request.body;
-    TestSuite.updateOne(filter, {$set:update}).then(() => {
+    testSuiteModel.updateOne(filter, {$set:update}).then(() => {
         return response.status(200).json({ message: "TestSuite updated" });
     }).catch((err: any) => {
         return response.status(400).json({ message: err.message });
@@ -70,7 +70,7 @@ export async function deleteTestSuiteById(request: express.Request, response: ex
     const id = request.params.id;
     try {
         const filter= {"_id": id};
-        await TestSuite.deleteOne(filter);
+        await testSuiteModel.deleteOne(filter);
         return response.status(200).json({ message: "TestSuite deleted" });
     } catch (err: any) {
         return response.status(500).json({ message: err.message });
