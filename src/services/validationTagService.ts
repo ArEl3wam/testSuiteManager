@@ -7,7 +7,7 @@ import { _idToid, flattenObject } from "../shared/utils";
 import { ValidationTagInsertion, ValidationTagUpdate, ValidationTagListingOptions } from "../interfaces/validationTagInterfaces";
 import { addValidationTagToTestCase } from "./testCaseService";
 const qs = require('qs');
-const TestSuite = require('../model/TestSuite').TestSuite;
+const testSuiteModel = require('../model/TestSuite').testSuiteModel;
 
 export async function insertValidationTagForTestCase(testSuiteId: string, testCaseId: string, validationTagInfo: ValidationTagInsertion) {
     let validationTagId: Types.ObjectId | undefined = undefined;
@@ -20,7 +20,7 @@ export async function insertValidationTagForTestCase(testSuiteId: string, testCa
         }
 
         // Check if test suite exists
-        const testSuite = await TestSuite.findById(testSuiteId, { testCaseRefs: false, validationTagRefs: false, __v: false }).exec();
+        const testSuite = await testSuiteModel.findById(testSuiteId, { testCaseRefs: false, validationTagRefs: false, __v: false }).exec();
         if (!testSuite) {
             throw new NotFoundError(`Test Suite with id '${testSuiteId}' was not found!`);
         }
@@ -66,7 +66,7 @@ export async function insertValidationTagForTestSuite(testSuiteId: string, valid
 
     try {
         // Check if test suite exists
-        const testSuite = await TestSuite.findById(testSuiteId, { testCaseRefs: false, validationTagRefs: false, __v: false }).exec();
+        const testSuite = await testSuiteModel.findById(testSuiteId, { testCaseRefs: false, validationTagRefs: false, __v: false }).exec();
         if (!testSuite) {
             throw new NotFoundError(`Test Suite with id '${testSuiteId}' was not found!`);
         }
@@ -101,7 +101,7 @@ export async function insertValidationTagForTestSuite(testSuiteId: string, valid
 
 export async function addValidationTagToTestSuite(testSuiteId: string, validationTag: { id?: Types.ObjectId, _id?: Types.ObjectId }) {
     try {
-        const t = await TestSuite.findByIdAndUpdate(testSuiteId, {
+        const t = await testSuiteModel.findByIdAndUpdate(testSuiteId, {
             $push: {
                 validationTagRefs: (validationTag.id) ? validationTag.id : validationTag._id
             }
