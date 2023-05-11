@@ -115,7 +115,7 @@ export async function addValidationTagToTestSuite(testSuiteId: string, validatio
 export async function getValidationTag(validationTagId: string) {
     const validationTag = await validationTagModel
         .findById(validationTagId, { __v: false })
-        .populate('validationPointRefs', { __v: false })
+        .populate('validationPointRefs', { __v: false, parent: false })
         .exec();
 
     if (!validationTag) {
@@ -129,7 +129,11 @@ export async function getValidationTag(validationTagId: string) {
 
     // convert _id to id for each validation point
     const validationPoints = validationPointsWith_id.map(
-        (validationPoint: any) => _idToid(validationPoint.toJSON())
+        (validationPoint: any) => {
+            let validationPointJson = validationPoint.toJSON();
+            validationPointJson._id = undefined;
+            return validationPointJson;
+        }
     );
 
     return _idToid({ ...validationTagObj, validationPoints });
@@ -167,7 +171,8 @@ export async function getValidationTags(filters: ValidationTagListingOptions) {
         // Get all validation tags, with validationPointRefs substituted with their actual documents
         const query = validationTagModel
             .find(dotNotationOptions, { __v: false })
-            .populate('validationPointRefs', { __v: false });
+            .populate('validationPointRefs', { __v: false, parent: false });
+
 
         // Handle pagination
         if (skip) {
@@ -182,6 +187,7 @@ export async function getValidationTags(filters: ValidationTagListingOptions) {
             throw new NotFoundError(`Error listing all validation tags!`);
         }
 
+
         return validationTags.map((validationTag) => {
             // validationPointRefs are now populated and become the actual validation points
             const validationPointsWith_id = validationTag.validationPointRefs;
@@ -192,7 +198,11 @@ export async function getValidationTags(filters: ValidationTagListingOptions) {
 
             // convert _id to id for each validation point
             const validationPoints = validationPointsWith_id.map(
-                (validationPoint: any) => _idToid(validationPoint.toJSON())
+                (validationPoint: any) => {
+                    let validationPointJson = validationPoint.toJSON();
+                    validationPointJson._id = undefined;
+                    return validationPointJson;
+                }
             );
 
             return _idToid({ ...validationTagObj, validationPoints });
@@ -230,12 +240,12 @@ export async function getValidationTagsForTestCase(filters: ValidationTagListing
 
         Object.assign(dotNotationOptions, { 'parent.testCase': { $exists: true } });
 
-       // console.log(dotNotationOptions)
+        // console.log(dotNotationOptions)
 
         // Get all validation tags, with validationPointRefs substituted with their actual documents
         const query = validationTagModel
             .find(dotNotationOptions, { __v: false })
-            .populate('validationPointRefs', { __v: false });
+            .populate('validationPointRefs', { __v: false, parent: false });
 
         // Handle pagination
         if (skip) {
@@ -260,7 +270,11 @@ export async function getValidationTagsForTestCase(filters: ValidationTagListing
 
             // convert _id to id for each validation point
             const validationPoints = validationPointsWith_id.map(
-                (validationPoint: any) => _idToid(validationPoint.toJSON())
+                (validationPoint: any) => {
+                    let validationPointJson = validationPoint.toJSON();
+                    validationPointJson._id = undefined;
+                    return validationPointJson;
+                }
             );
 
             return _idToid({ ...validationTagObj, validationPoints });
@@ -302,7 +316,7 @@ export async function getValidationTagsForTestSuite(filters: ValidationTagListin
         // Get all validation tags, with validationPointRefs substituted with their actual documents
         const query = validationTagModel
             .find(dotNotationOptions, { __v: false })
-            .populate('validationPointRefs', { __v: false });
+            .populate('validationPointRefs', { __v: false, parent: false });
 
         // Handle pagination
         if (skip) {
@@ -327,7 +341,11 @@ export async function getValidationTagsForTestSuite(filters: ValidationTagListin
 
             // convert _id to id for each validation point
             const validationPoints = validationPointsWith_id.map(
-                (validationPoint: any) => _idToid(validationPoint.toJSON())
+                (validationPoint: any) => {
+                    let validationPointJson = validationPoint.toJSON();
+                    validationPointJson._id = undefined;
+                    return validationPointJson;
+                }
             );
 
             return _idToid({ ...validationTagObj, validationPoints });
