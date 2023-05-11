@@ -3,6 +3,7 @@ import { validationPointModel } from "../model/ValidationPoint";
 import {ValidationPointResultInterface, ValidationPointUpdate } from '../interfaces/ValidationPointResultInterface';
 import { LinkingResourcesError, NotFoundError } from "../shared/errors";
 import validationTagModel from "../model/ValidationTag";
+import { flattenObject } from "../shared/utils";
 
 
 
@@ -183,7 +184,7 @@ export async function updateValdationPoint(validationPointId: string, updateInfo
         if(!updateInfo) return
         const { isSuccessful } = updateInfo
 
-        const validationPoint = await validationPointModel.findByIdAndUpdate(validationPointId, updateInfo, { new: true, select: '-__v' })
+        const validationPoint = await validationPointModel.findByIdAndUpdate(validationPointId, flattenObject(updateInfo), { new: true, select: '-__v' })
         if(!validationPoint) throw new NotFoundError('ValidationPoint Not found')
         return validationPoint
     } catch (err: unknown) {

@@ -54,12 +54,11 @@ const models = [testSuiteModel, testCaseModel, validationTagModel, validationPoi
 
 export async function searchResources(searchOptions: SearchOptions) {
     const { select: rootResource, filteration } = searchOptions
+   
     
-
+    console.log(searchOptions)
+    
     if(!filteration) return []
-    console.dir(rootResource, { depth: Infinity })
-    console.dir(filteration, { depth: Infinity })
-
     const pipeline: PipelineStage[] = []
     
     if (filteration[rootResource]) pipeline.push(matchUpStage(filteration[rootResource]))
@@ -80,6 +79,10 @@ export async function searchResources(searchOptions: SearchOptions) {
         pipeline.push(stage)
         if(i != resourceEnumLength - 1) pipeline.push(unwindStage(i - ResourcesOrder[rootResource]))
     }
+    
+    // Filter empty validation points
+    if(ResourcesOrder[rootResource] < resourceEnumLength - 1)
+        pipeline.push({'$match':{ '$expr': {'$gt': [{'$size': `$${'children.'.repeat(resourceEnumLength - ResourcesOrder[rootResource] - 1).slice(0, -1)}`}, 0]}}})
 
     for(let i = 1; i >= ResourcesOrder[rootResource]; --i) {
         
@@ -99,7 +102,6 @@ export async function searchResources(searchOptions: SearchOptions) {
         
         pipeline.push(groupStage(idGrouping, pushObj))
     }
-    console.dir(pipeline, { depth: Infinity })
 
     const results = await models[ResourcesOrder[rootResource]].aggregate(pipeline)
 

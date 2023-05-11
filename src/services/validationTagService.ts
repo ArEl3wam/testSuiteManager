@@ -357,7 +357,7 @@ export async function getValidationTagsForTestSuite(filters: ValidationTagListin
 
 export async function updateValidationTag(validationTagId: string, reqBody: ValidationTagUpdate) {
     try {
-        const updatedValidationTag = await validationTagModel.findByIdAndUpdate(validationTagId, reqBody, { new: true, select: '-__v' });
+        const updatedValidationTag = await validationTagModel.findByIdAndUpdate(validationTagId, flattenObject(reqBody), { new: true, select: '-__v' });
         if (!updatedValidationTag) {
             throw new NotFoundError(`Validation tag with id ${validationTagId} not found!`);
         }

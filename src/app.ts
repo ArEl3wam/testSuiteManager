@@ -23,7 +23,7 @@ export function createApp() {
       decoder(str, defaultDecoder, charset, type) {
         if(type == 'key')  return str
         if(str == 'true' || str == 'false') return str == 'true'
-        else if (!isNaN(parseFloat(str))) return parseFloat(str)
+        else if (!isNaN(parseFloat(str)) && !isNaN(<any>str - 0)) return parseFloat(str)
         else return defaultDecoder(str) 
       }
     })
