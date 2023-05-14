@@ -32,6 +32,13 @@ const validationTagSchema = new Schema<ValidationTagBase>({
         ref: 'validationPoint',
         default: []
     },
+    end_date: {
+        type: Schema.Types.Date
+    },
+    creation_date: {
+        type: Schema.Types.Date
+    },
+
 }, { toJSON: { virtuals: true }});
 
 
@@ -53,6 +60,9 @@ interface ValidationTagBase {
     }
     validationPointRefs: Types.ObjectId[],
     validationPoints_count?: number
+    
+    creation_date: Date,
+    end_date: Date
 }
 
 const validationTagModel = model<ValidationTagBase>('validationTag', validationTagSchema);

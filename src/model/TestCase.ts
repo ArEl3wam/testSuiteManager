@@ -23,6 +23,12 @@ const testCaseSchema = new Schema<TestCaseBase>({
         type:[mongoose.Schema.Types.ObjectId],
         ref:'validationTag'
     },
+    end_date: {
+        type: Schema.Types.Date
+    },
+    creation_date: {
+        type: Schema.Types.Date
+    },
 }, { toJSON: { virtuals: true }});
 
 testCaseSchema.virtual('validationTags_count').get(function () {
@@ -46,5 +52,7 @@ interface TestCaseBase {
             id: Types.ObjectId
         }
     }
-    validationTags_count?: number
+    validationTags_count?: number,
+    end_date: Date,
+    creation_date: Date
 }

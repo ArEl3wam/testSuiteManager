@@ -1,9 +1,11 @@
 import { ObjectId, Types } from "mongoose";
-import { validationPointModel } from "../model/ValidationPoint";
+import { ValidationPointBase, validationPointModel } from "../model/ValidationPoint";
 import {ValidationPointResultInterface, ValidationPointUpdate } from '../interfaces/ValidationPointResultInterface';
 import { LinkingResourcesError, NotFoundError } from "../shared/errors";
 import validationTagModel from "../model/ValidationTag";
 import { flattenObject } from "../shared/utils";
+import { testSuiteModel } from "../model/TestSuite";
+import testCaseModel from "../model/TestCase";
 
 
 
@@ -190,4 +192,26 @@ export async function updateValdationPoint(validationPointId: string, updateInfo
     } catch (err: unknown) {
         throw err
     }
+}
+
+export async function  updateParentsEndDate(validationPoint: ValidationPointBase) {
+    const { testCase, testSuite, validationTag } = validationPoint.parent
+
+    return Promise.allSettled([
+        testSuiteModel.findByIdAndUpdate(testSuite.id, {
+            '$max': {
+                'end_date': validationPoint.creation_date
+            }
+        }),
+        testCaseModel.findByIdAndUpdate(testCase.id, {
+            '$max': {
+                'end_date': validationPoint.creation_date
+            }
+        }),
+        validationTagModel.findByIdAndUpdate(validationTag.id, {
+            '$max': {
+                'end_date': validationPoint.creation_date
+            }
+        })
+    ])
 }

@@ -56,10 +56,13 @@ const validationPointSchema = new Schema<ValidationPointBase>({
     isSuccessful: {
         type: Schema.Types.Boolean,
         default: true
+    },
+    creation_date: {
+        type: Schema.Types.Date
     }
 });
 
-interface ValidationPointBase {
+export interface ValidationPointBase {
     metaData: object,
     // type: string,
     levels: object,
@@ -77,7 +80,8 @@ interface ValidationPointBase {
         }
     },
     results: ValidationPointResultInterface[],
-    isSuccessful: boolean
+    isSuccessful: boolean,
+    creation_date: Date
 }
 
 export const validationPointModel = model<ValidationPointBase>('validationPoint', validationPointSchema);
