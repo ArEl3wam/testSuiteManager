@@ -16,7 +16,12 @@ const testSuiteSchema = new Schema({
         default: []
     }
 
-});
+}, { toJSON: { virtuals: true }});
+
+testSuiteSchema.virtual('testCases_count').get(function () {
+
+    return this.testCaseRef?.length
+})
 
 export const testSuiteModel = model('testSuite', testSuiteSchema);
 // export default testSuiteModel;

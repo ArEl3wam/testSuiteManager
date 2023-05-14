@@ -2,7 +2,7 @@ import { Types } from "mongoose";
 import { TestCaseInsertion, TestCaseListingOptions, TestCaseUpdate } from "../interfaces/testCaseInterfaces";
 import testCaseModel from "../model/TestCase";
 import { LinkingResourcesError, NotFoundError } from "../shared/errors";
-import { _idToid, flattenObject } from "../shared/utils";
+import { _idToid, flattenObject, removeAttributes } from "../shared/utils";
 const testSuiteModel = require('../model/TestSuite').testSuiteModel;
 
 
@@ -83,15 +83,16 @@ export async function listTestCases(listingOptions: TestCaseListingOptions) {
             }
         })
 
-        const query = testCaseModel.find(options, { validationTagRefs: false, __v: false })
+        const query = testCaseModel.find(options, { __v: false })
         if(skip) {
             query.sort({ _id: 1 }) 
             query.skip(skip)
         }
         if(limit) query.limit(limit)
         const testCases = await query.exec()
-        return testCases.map(testCase =>_idToid(testCase.toJSON()))
+        return testCases.map(testCase => removeAttributes(_idToid(testCase.toJSON()), ['validationTagRefs']))
     } catch (err: unknown) {
+        console.log(err)
         throw err
     }
 }
@@ -99,7 +100,7 @@ export async function listTestCases(listingOptions: TestCaseListingOptions) {
 
 export async function updateTestCase(testCaseId: string, updateData: TestCaseUpdate) {
     try {
-        const testCase = await testCaseModel.findByIdAndUpdate(testCaseId,flattenObject(updateData), { new: true,  fields: { __v: false, validationTagRefs: false }})
+        const testCase = await testCaseModel.findByIdAndUpdate(testCaseId,flattenObject(updateData), { new: true,  fields: { __v: false }})
         if(!testCase) {
             throw new NotFoundError(`Test Case with id '${testCaseId}' was not found!`)
         }

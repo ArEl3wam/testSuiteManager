@@ -32,7 +32,13 @@ const validationTagSchema = new Schema<ValidationTagBase>({
         ref: 'validationPoint',
         default: []
     },
-});
+}, { toJSON: { virtuals: true }});
+
+
+validationTagSchema.virtual('validationPoints_count').get(function () {
+    return this.validationPointRefs?.length
+})
+
 
 interface ValidationTagBase {
     metaData: object,
@@ -46,6 +52,7 @@ interface ValidationTagBase {
         }
     }
     validationPointRefs: Types.ObjectId[],
+    validationPoints_count?: number
 }
 
 const validationTagModel = model<ValidationTagBase>('validationTag', validationTagSchema);

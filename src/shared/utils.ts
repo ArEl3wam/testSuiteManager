@@ -22,3 +22,10 @@ export function flattenObject(obj: object, prefix = '') {
         return acc;
     }, {});
 }
+
+export function removeAttributes<T, K extends keyof T> (obj: T, attrs: K[]): Omit<T, K> {
+    for(let i = 0; i < attrs.length; i++) {
+        delete  obj[attrs[i]]
+    }
+    return obj
+}
