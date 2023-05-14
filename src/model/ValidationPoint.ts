@@ -53,7 +53,7 @@ const validationPointSchema = new Schema<ValidationPointBase>({
         // default: {},
         required: true 
     },
-    isSuccessful: {
+    status: {
         type: Schema.Types.Boolean,
         default: true
     },
@@ -80,7 +80,7 @@ export interface ValidationPointBase {
         }
     },
     results: ValidationPointResultInterface[],
-    isSuccessful: boolean,
+    status: boolean,
     creation_date: Date
 }
 

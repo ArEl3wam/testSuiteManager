@@ -7,7 +7,7 @@ const testCaseSchema = new Schema<TestCaseBase>({
         type: Schema.Types.Mixed,
         default: {}
     },
-    isSuccessful: {
+    status: {
         type: Schema.Types.Boolean,
         default: true
     },
@@ -45,7 +45,7 @@ export default testCaseModel;
 
 interface TestCaseBase {
     metaData: object,
-    isSuccessful: boolean,
+    status: boolean,
     validationTagRefs?: Types.ObjectId[],
     parent: {
         testSuite: {

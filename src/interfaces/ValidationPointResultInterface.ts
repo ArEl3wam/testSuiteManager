@@ -7,5 +7,5 @@ export interface ValidationPointResultInterface {
 }
 
 export interface ValidationPointUpdate {
-    isSuccessful: boolean
+    status: boolean
 }

@@ -21,7 +21,7 @@ export async function getAllTestSuites(request: express.Request, response: expre
         const page: number = parseInt(request.query.page as string, 10) || 1;
         const limit: number = parseInt(request.query.limit as string, 10) || 10;
         let queryObject: {[key: string]: any} = {
-            "isSuccessful": request.query.isSuccessful || "",
+            "status": request.query.status || "",
             'metaData.name': request.query.name || "",
             "metaData.executablePath": request.query.executablePath || "",
             "metaData.author": request.query.author || ""

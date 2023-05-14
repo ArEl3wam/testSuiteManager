@@ -94,10 +94,6 @@ paths:
                 $ref: '#/definitions/validationTagOnTestSuite'
         500:
           description: Server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/definitions/'
 
 definitions:
   updateValidationPoint:

@@ -4,7 +4,7 @@ const model = mongoose.model;
 
 const testSuiteSchema = new Schema({
     metaData: Schema.Types.Mixed,
-    isSuccessful: Boolean,
+    status: Boolean,
     testCaseRef: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: 'testCase'

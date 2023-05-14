@@ -2,12 +2,12 @@ import { ListingOptions } from "./listingInterfaces";
 
 export interface ValidationTagInsertion {
     metaData?: object,
-    isSuccessful?: boolean,
+    status?: boolean,
     parent?: object
 }
 
 export interface ValidationTagUpdate {
-    isSuccessful?: boolean,
+    status?: boolean,
 }
 
 export interface ValidationTagListingOptions extends ListingOptions {

@@ -8,7 +8,7 @@ const validationTagSchema = new Schema<ValidationTagBase>({
         default: {},
         required: true
     },
-    isSuccessful: {
+    status: {
         type: Schema.Types.Boolean,
         default: true,
         required: true
@@ -49,7 +49,7 @@ validationTagSchema.virtual('validationPoints_count').get(function () {
 
 interface ValidationTagBase {
     metaData: object,
-    isSuccessful: boolean,
+    status: boolean,
     parent: {
         testCase: {
             id: Types.ObjectId

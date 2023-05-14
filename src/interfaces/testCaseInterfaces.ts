@@ -3,7 +3,7 @@ import { ListingOptions } from "./listingInterfaces";
 
 export interface TestCaseInsertion {
     metaData?: object,
-    isSuccessful?: boolean,
+    status?: boolean,
 }
 
 export interface TestCaseListingOptions extends ListingOptions{
@@ -14,5 +14,5 @@ export interface TestCaseListingOptions extends ListingOptions{
 }
 
 export interface TestCaseUpdate {
-    isSuccessful?: boolean
+    status?: boolean
 }

@@ -184,7 +184,7 @@ export async function updateValdationPoint(validationPointId: string, updateInfo
 
     try {
         if(!updateInfo) return
-        const { isSuccessful } = updateInfo
+        const { status } = updateInfo
 
         const validationPoint = await validationPointModel.findByIdAndUpdate(validationPointId, flattenObject(updateInfo), { new: true, select: '-__v' })
         if(!validationPoint) throw new NotFoundError('ValidationPoint Not found')
