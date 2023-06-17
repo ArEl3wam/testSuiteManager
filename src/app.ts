@@ -26,8 +26,22 @@ export function createApp() {
         else if (!isNaN(parseFloat(str)) && !isNaN(<any>str - 0)) return parseFloat(str)
         else return defaultDecoder(str) 
       }
-    })
+      })
   })
+
+  // adding middleware to enable CORS
+  
+  // app.use((req, res, next) => {
+  //   res.header("Access-Control-Allow-Origin", "*");
+  //   res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
+  //   next();
+  // });
+
+  app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
 
   app.use(express.json({
     
