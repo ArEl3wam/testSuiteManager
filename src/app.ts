@@ -12,6 +12,7 @@ import { valdationPointRouter } from "./routes/validationPointRoutes";
 import {databaseRouter  } from "./routes/databaseRoutes";
 
 import { SearchRouter } from "./routes/searchRoutes";
+import {shutdownRouter} from "./routes/shutdownRouter"
 
 export function createApp() {
   const app = express();
@@ -38,7 +39,7 @@ export function createApp() {
   // });
 
   app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
@@ -51,8 +52,9 @@ export function createApp() {
   app.use(TestSuiteRoutes);
   app.use(testCaseRouter);
   app.use(validationTagRouter);
-  app.use(valdationPointRouter)
-  app.use(SearchRouter)
+  app.use(valdationPointRouter);
+  app.use(SearchRouter);
+  app.use(shutdownRouter);
 
   const options = {
     definition: {
