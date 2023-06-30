@@ -29,3 +29,4 @@ export function removeAttributes<T, K extends keyof T> (obj: T, attrs: K[]): Omi
     }
     return obj
 }
+

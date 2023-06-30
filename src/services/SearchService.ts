@@ -57,6 +57,8 @@ export async function searchResources(searchOptions: SearchOptions) {
    
     
     console.log(searchOptions)
+    console.log(filteration);
+    
     
     if(!filteration) return []
     const pipeline: PipelineStage[] = []
@@ -102,6 +104,8 @@ export async function searchResources(searchOptions: SearchOptions) {
         
         pipeline.push(groupStage(idGrouping, pushObj))
     }
+    console.log(pipeline);
+    
 
     const results = await models[ResourcesOrder[rootResource]].aggregate(pipeline)
 
