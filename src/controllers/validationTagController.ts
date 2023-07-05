@@ -6,7 +6,8 @@ import {
     getValidationTags,
     getValidationTagsForTestCase,
     getValidationTagsForTestSuite,
-    updateValidationTag
+    updateValidationTag,
+    getAllValidationTagsOfTestCaseService
 } from '../services/validationTagService'
 import { ValidationTagInsertion, ValidationTagListingOptions, ValidationTagUpdate } from '../interfaces/validationTagInterfaces'
 import { LinkingResourcesError, NotFoundError } from '../shared/errors'
@@ -48,7 +49,7 @@ export async function createValidationTagForTestSuite(req: express.Request, res:
     }
 }
 
-export async function fetchValidationTag(req: express.Request, res: express.Response) {
+export async function fetchValidationTagById(req: express.Request, res: express.Response) {
     const validationTagId = req.params.validationTagId;
 
     try {
@@ -83,7 +84,7 @@ export async function fetchValidationTags(req: express.Request, res: express.Res
 export async function fetchValidationTagsForTestCase(req: express.Request, res: express.Response) {
     //(req.query)
     const filters: ValidationTagListingOptions = req.query;
-
+    
     try {
         const validationTags = await getValidationTagsForTestCase(filters);
         res.status(200).send(validationTags);
@@ -127,4 +128,23 @@ export async function changeValidationTag(req: express.Request, res: express.Res
             res.status(500).send({ message: 'Server Error' });
         }
     }
+}
+
+export async function getAllValidationTagsOfTestCase(req: express.Request, res: express.Response) {
+
+    try {
+        const testCaseId = req.params.testCaseId;
+        const results = await getAllValidationTagsOfTestCaseService(testCaseId);
+        res.status(200).json({
+            status: 'success',
+            resultsLength: results.length,
+            results
+        })
+        
+     } catch (err: any) {
+        res.status(400).json({
+            status: 'fail',
+            message: err.message
+        })
+     }
 }

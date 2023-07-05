@@ -1,11 +1,21 @@
 import express from "express";
-import { creatingTestCase, fetchingTestCaseById, listingTestCases, updatingTestCase } from "../controllers/TestCaseController";
+import {getAllTestcasesOfTestSuite, creatingTestCase, fetchingTestCaseById, listingTestCases, updatingTestCase } from "../controllers/TestCaseController";
 
 export const testCaseRouter = express.Router()
+testCaseRouter
+    .route('/testCases')
+    .get(listingTestCases)
 
-testCaseRouter.get('/testCases/:testCaseId', fetchingTestCaseById)
+testCaseRouter
+    .route('/testCases/:testCaseId')
+    .get(fetchingTestCaseById)
+    .patch(updatingTestCase)
 
-testCaseRouter.patch('/testCases/:testCaseId', updatingTestCase)
-testCaseRouter.post('/testSuite/:testSuiteId/testCases/', creatingTestCase)
+testCaseRouter
+    .route('/testCases/testSuite/:testSuiteId')
+    .get(getAllTestcasesOfTestSuite)
 
-testCaseRouter.get('/testCases/', listingTestCases)
+testCaseRouter
+    .route('/testSuite/:testSuiteId/testCases')
+    .post(creatingTestCase)
+

@@ -215,3 +215,19 @@ export async function  updateParentsEndDate(validationPoint: ValidationPointBase
         })
     ])
 }
+
+export async function getAllValidationPointsOfvalidationTagService(testCaseId: string) {
+    try {
+        const validationTagData = await validationTagModel.findById(testCaseId, { '_v': 0 }).exec()
+        if (!validationTagData) { 
+            throw new Error(`ValidationTag with id '${testCaseId}' not found`)
+        }
+        const results = await validationPointModel.find({ '_id': { $in: validationTagData.validationPointRefs } }).exec()
+        return results
+    }
+    catch (err: any) {
+        throw new Error(`ValidationTag with id '${testCaseId}' not found`)
+    }
+    
+}
+    

@@ -15,6 +15,7 @@ export async function SearchingResources(req: express.Request, res: express.Resp
             .project()
             .project("validationTag")
             .project("testCase")
+            // .group(req.query.select)
             .paginate(req.query.page,req.query.limit)
         const results = await aggregateFeatures.getAggregation().exec()
 

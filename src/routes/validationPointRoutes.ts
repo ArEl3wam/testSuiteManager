@@ -1,10 +1,22 @@
 import { Router } from "express";
-import { listingValidationPoint , addValidationTag, updatingValidationPoint} from "../controllers/ValidationPointController";
+import {getAllValidationPointsOfvalidationTag, listingValidationPoint , addValidationTag, updatingValidationPoint} from "../controllers/ValidationPointController";
 
 export const valdationPointRouter = Router()
 
+valdationPointRouter
+    .route('/validationPoints')
+    .get(listingValidationPoint)
 
-valdationPointRouter.get('/validationPoints', listingValidationPoint);
-valdationPointRouter.post('/TestSuite/:testSuiteId/TestCase/:testCaseId/ValidationTag/:validationTagId/ValidationPoint', addValidationTag);
+valdationPointRouter
+    .route('/validationPoints/:validationPointId')
+    .patch(updatingValidationPoint)
 
-valdationPointRouter.patch('/validationPoints/:validationPointId', updatingValidationPoint)
+
+valdationPointRouter
+    .route('/validationPoints/validationtag/:validationTagId')
+    .get(getAllValidationPointsOfvalidationTag)
+
+
+valdationPointRouter
+    .route('/TestSuite/:testSuiteId/TestCase/:testCaseId/ValidationTag/:validationTagId/ValidationPoint')
+    .post(addValidationTag);

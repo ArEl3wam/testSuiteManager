@@ -109,3 +109,15 @@ export async function updateTestCase(testCaseId: string, updateData: TestCaseUpd
         throw err
     }
 }
+
+
+export async function getAllTestcasesOfTestSuiteService(testSuiteId: string) {
+    try {
+        const testSuiteData = await testSuiteModel.findById(testSuiteId, { '_v': 0 }).exec()
+        const results = await testCaseModel.find({ '_id': { $in: testSuiteData.testCaseRef } }).exec()
+        return results
+    }
+    catch (err: any) {
+        throw new Error(`TestSuite with id ${testSuiteId} not found`)
+    }
+}

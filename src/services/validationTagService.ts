@@ -368,3 +368,18 @@ export async function updateValidationTag(validationTagId: string, reqBody: Vali
     }
 
 }
+
+export async function getAllValidationTagsOfTestCaseService(testCaseId: string) {
+    try { 
+        const testCaseData = await testCaseModel.findById(testCaseId);
+        if (!testCaseData) {
+            throw new NotFoundError(`Test case with id ${testCaseId} not found!`);
+        }
+        const results = await validationTagModel.find({ '_id': { $in: testCaseData.validationTagRefs } }, { __v: false });
+        return results
+    }
+    catch (err: any) {
+        throw new NotFoundError((`Test case with id ${testCaseId} not found!`));
+    }
+
+}

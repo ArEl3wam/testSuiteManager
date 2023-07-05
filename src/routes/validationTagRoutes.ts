@@ -2,22 +2,46 @@ import express from "express";
 import {
     createValidationTagForTestCase,
     createValidationTagForTestSuite,
-    fetchValidationTag,
+    fetchValidationTagById,
     fetchValidationTags,
     fetchValidationTagsForTestCase,
     fetchValidationTagsForTestSuite,
-    changeValidationTag
+    changeValidationTag,
+    getAllValidationTagsOfTestCase
 } from "../controllers/validationTagController";
+
 
 export const validationTagRouter = express.Router()
 
-validationTagRouter.post('/validationTags/testSuites/:testSuiteId/testCases/:testCaseId', createValidationTagForTestCase);
-validationTagRouter.post('/validationTags/testSuites/:testSuiteId', createValidationTagForTestSuite);
+validationTagRouter
+    .route('/validationTags')
+    .get(fetchValidationTags);
 
-validationTagRouter.patch('/validationTags/:validationTagId', changeValidationTag);
+validationTagRouter
+    .route('/validationTags/testCases')
+    .get(fetchValidationTagsForTestCase);
 
-validationTagRouter.get('/validationTags/testCases', fetchValidationTagsForTestCase);
-validationTagRouter.get('/validationTags/testSuites', fetchValidationTagsForTestSuite);
+validationTagRouter
+    .route('/validationTags/testCases/:testCaseId')
+    .get(getAllValidationTagsOfTestCase)
 
-validationTagRouter.get('/validationTags/:validationTagId', fetchValidationTag);
-validationTagRouter.get('/validationTags', fetchValidationTags);
+validationTagRouter
+    .route('/validationTags/testSuites')
+    .get(fetchValidationTagsForTestSuite);
+        
+validationTagRouter
+    .route('/validationTags/:validationTagId')
+    .get(fetchValidationTagById)
+    .patch(changeValidationTag);
+
+
+validationTagRouter
+    .route('/validationTags/testSuites/:testSuiteId')
+    .post(createValidationTagForTestSuite);
+
+
+validationTagRouter    
+    .route('/validationTags/testSuites/:testSuiteId/testCases/:testCaseId')
+    .post(createValidationTagForTestCase);
+    
+

@@ -1,5 +1,12 @@
 import express from 'express'
-import { addValidationPointToValidationTag, listValidationPoints, parseValidationPointResults, updateParentsEndDate, updateValdationPoint } from '../services/validationPointService'
+import {
+    addValidationPointToValidationTag,
+    listValidationPoints,
+    parseValidationPointResults,
+    updateParentsEndDate,
+    updateValdationPoint,
+    getAllValidationPointsOfvalidationTagService
+} from '../services/validationPointService'
 const ValidationPoint = require('../model/ValidationPoint').ValidationPoint;
 
 
@@ -64,3 +71,22 @@ export async function  updatingValidationPoint(req: express.Request, res: expres
         res.status(500).send('Server error')
     }
 }
+
+export async function getAllValidationPointsOfvalidationTag(req: express.Request, res: express.Response) {
+    try {
+        const results = await getAllValidationPointsOfvalidationTagService(req.params.validationTagId);
+        res.status(200).json({
+            status: 'success',
+            resultsLength: results.length,
+            results
+        })
+        
+     }
+    catch (err: any) {
+        res.status(400).json({
+            status: 'fail',
+            message: err.message
+        })
+    }
+}
+    

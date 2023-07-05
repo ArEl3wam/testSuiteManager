@@ -29,7 +29,7 @@ export class AggregationFeatures{
         localFieldName = this._modifyLocalName(localFieldName)
 
         const projection: any = {}
-        const fields: string[] = ['parent', '__v', '_id', 'validationPointRefs', 'validationTagRefs', 'testCaseRef'];
+        const fields: string[] = ['parent', '__v', 'validationPointRefs', 'validationTagRefs', 'testCaseRef'];
         fields.forEach(field => projection[localFieldName + field] = 0)
         this.aggregation.project(projection)
         return this;
@@ -65,13 +65,6 @@ export class AggregationFeatures{
         return result;
     }
 
-    _modifyLocalName(localFieldName: string) {
-        if (localFieldName) {
-            localFieldName = localFieldName + "."
-        }
-        return localFieldName
-    }
-
     sort(sort: any = {}) {
         if (!sort) {
             return this;
@@ -79,6 +72,18 @@ export class AggregationFeatures{
         sort = sort.split(",").join(" ");
         this.aggregation.sort(sort)
         return this;
+    }
+    group(selectedView: any) {
+        // if (!selectedView || selectedView.toLowerCase() === "vp") {
+        //     return this;
+        // }
+        // this.aggregation.group({
+        //     _id: `$${selectedView}._id`,
+        //     children: { $push: "$$ROOT" }
+        //     }
+        // )
+        // return this;
+        
     }
     paginate(page: any = 1, limit: any = 100) {
         const skip = (page - 1) * limit;
@@ -88,6 +93,13 @@ export class AggregationFeatures{
 
     getAggregation() {
         return this.aggregation
+    }
+
+    _modifyLocalName(localFieldName: string) {
+        if (localFieldName) {
+            localFieldName = localFieldName + "."
+        }
+        return localFieldName
     }
 }
 

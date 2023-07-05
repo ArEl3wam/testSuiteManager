@@ -1,6 +1,6 @@
 
 import express from 'express'
-import { getTestCaseById, insertTestCase, listTestCases, updateTestCase } from '../services/testCaseService'
+import { getAllTestcasesOfTestSuiteService, getTestCaseById, insertTestCase, listTestCases, updateTestCase } from '../services/testCaseService'
 import { TestCaseInsertion, TestCaseListingOptions } from '../interfaces/testCaseInterfaces'
 import { NotFoundError } from '../shared/errors'
 
@@ -60,3 +60,22 @@ export async function updatingTestCase(req: express.Request, res: express.Respon
         }
     }
 }
+
+export async function getAllTestcasesOfTestSuite(req: express.Request, res: express.Response) {
+    try {
+        
+        const results = await getAllTestcasesOfTestSuiteService(req.params.testSuiteId)
+        res.status(200).json({
+            status: 'success',
+            resultsLength: results.length,
+            results
+        })
+    }
+    catch (err:any) {
+        res.status(400).json({
+            status: 'fail',
+            message: err.message
+        })
+    }
+}
+    
