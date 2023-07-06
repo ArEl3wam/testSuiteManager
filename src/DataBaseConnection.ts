@@ -1,18 +1,9 @@
 const mongoose=require('mongoose');
 
 
-export async function buildDatabase(databaseUrl:string) {
-    console.log(databaseUrl);
-    
-    return mongoose.connect(databaseUrl, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => {
-        console.log("connected to db ", databaseUrl);
-    })
-    .catch((err:string) => {
+export function buildDatabase(databaseUrl:string) {
         
-        console.log("Connection Error with the database: "+err);
-        // throw  err;
-    });
+    return  mongoose.connect(databaseUrl, { useNewUrlParser: true, useUnifiedTopology: true })
 
 }
 export async function closeDatabase() {

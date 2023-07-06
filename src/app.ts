@@ -1,5 +1,4 @@
 import express from "express";
-require("dotenv").config();
 import qs from 'qs'
 const bodyParser = require('body-parser');
 import swaggerUi from "swagger-ui-express";
@@ -11,7 +10,8 @@ import {validationTagRouter} from "./routes/validationTagRoutes";
 import {valdationPointRouter} from "./routes/validationPointRoutes";
 import {databaseRouter} from "./routes/databaseRoutes";
 import {SearchRouter} from "./routes/searchRoutes";
-import {shutdownRouter} from "./routes/shutdownRouter"
+import { shutdownRouter } from "./routes/shutdownRouter"
+import { swapDatabaseConnection } from "./controllers/databaseController"; 
 
 export function createApp() {
   const app = express();
@@ -29,23 +29,16 @@ export function createApp() {
       })
   })
 
-  // adding middleware to enable CORS
-  
-  // app.use((req, res, next) => {
-  //   res.header("Access-Control-Allow-Origin", "*");
-  //   res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-  //   next();
-  // });
-
   app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+  });
 
   app.use(express.json({
     
   }));
+  app.use(swapDatabaseConnection)
   app.use(bodyParser.json());
   app.use(databaseRouter)
   app.use(TestSuiteRouter);
