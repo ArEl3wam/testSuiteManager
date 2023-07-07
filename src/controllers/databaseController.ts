@@ -39,14 +39,17 @@ export async function closeDatabaseConnection(request: express.Request, response
 }
 
 export async function swapDatabaseConnection(request: express.Request, response: express.Response, next: express.NextFunction) {
+
+    const db_name = request.cookies['databaseName'];
+    
     if (request.url.split('/')[1] == 'database') {
         return next();
     }
-    if (!request.body.databaseName) {
+    if (!db_name) {
         return next();
     }
-    const newDbUrl: string = `${process.env.DB_URL}${process.env.DB_PORT}/${request.body.databaseName}`;
-    if (request.body.databaseName != mongoose.connection.name) {
+    const newDbUrl: string = `${process.env.DB_URL}${process.env.DB_PORT}/${db_name}`;
+    if (db_name != mongoose.connection.name) {
         
         try {
             

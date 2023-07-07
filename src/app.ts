@@ -12,6 +12,8 @@ import {databaseRouter} from "./routes/databaseRoutes";
 import {SearchRouter} from "./routes/searchRoutes";
 import { shutdownRouter } from "./routes/shutdownRouter"
 import { swapDatabaseConnection } from "./controllers/databaseController"; 
+const cookieParser = require('cookie-parser');
+
 
 export function createApp() {
   const app = express();
@@ -38,6 +40,8 @@ export function createApp() {
   app.use(express.json({
     
   }));
+
+  app.use(cookieParser());
   app.use(swapDatabaseConnection)
   app.use(bodyParser.json());
   app.use(databaseRouter)
