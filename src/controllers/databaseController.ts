@@ -39,8 +39,9 @@ export async function closeDatabaseConnection(request: express.Request, response
 }
 
 export async function swapDatabaseConnection(request: express.Request, response: express.Response, next: express.NextFunction) {
-
-    const db_name = request.cookies['databaseName'];
+    const db_name= request.query.databaseName;
+    
+    // const db_name = request.cookies['databaseName'];
     
     if (request.url.split('/')[1] == 'database') {
         return next();
