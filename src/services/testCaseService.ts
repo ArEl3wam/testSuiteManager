@@ -1,8 +1,11 @@
+import express from 'express';
 import { Types } from "mongoose";
 import { TestCaseInsertion, TestCaseListingOptions, TestCaseUpdate } from "../interfaces/testCaseInterfaces";
 import testCaseModel from "../model/TestCase";
 import { LinkingResourcesError, NotFoundError } from "../shared/errors";
 import { _idToid, flattenObject, removeAttributes } from "../shared/utils";
+import APIFeatures from "./../shared/apiFeatures";
+import { application } from "express";
 const testSuiteModel = require('../model/TestSuite').testSuiteModel;
 
 
@@ -111,13 +114,18 @@ export async function updateTestCase(testCaseId: string, updateData: TestCaseUpd
 }
 
 
-export async function getAllTestcasesOfTestSuiteService(testSuiteId: string) {
+export async function getAllTestcasesOfTestSuiteService(testSuiteId: string, req: express.Request) {
     try {
+        
         const testSuiteData = await testSuiteModel.findById(testSuiteId, { '_v': 0 }).exec()
-        const results = await testCaseModel.find({ '_id': { $in: testSuiteData.testCaseRef } }).exec()
-        return results
+        let query = testCaseModel.find({ '_id': { $in: testSuiteData.testCaseRef } })
+        
+        let api = APIFeatures.getInstance(query, req.query).filter().limitFields().sort().paginate()
+        return api.getQuery().exec()
     }
     catch (err: any) {
+        console.log(err);
+        
         throw new Error(`TestSuite with id ${testSuiteId} not found`)
     }
 }

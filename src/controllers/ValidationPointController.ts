@@ -74,7 +74,7 @@ export async function  updatingValidationPoint(req: express.Request, res: expres
 
 export async function getAllValidationPointsOfvalidationTag(req: express.Request, res: express.Response) {
     try {
-        const results = await getAllValidationPointsOfvalidationTagService(req.params.validationTagId);
+        const results = await getAllValidationPointsOfvalidationTagService(req.params.validationTagId, req);
         res.status(200).json({
             status: 'success',
             resultsLength: results.length,

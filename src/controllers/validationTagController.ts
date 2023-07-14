@@ -11,7 +11,6 @@ import {
 } from '../services/validationTagService'
 import { ValidationTagInsertion, ValidationTagListingOptions, ValidationTagUpdate } from '../interfaces/validationTagInterfaces'
 import { LinkingResourcesError, NotFoundError } from '../shared/errors'
-const qs = require('qs');
 
 
 export async function createValidationTagForTestCase(req: express.Request, res: express.Response) {
@@ -134,7 +133,8 @@ export async function getAllValidationTagsOfTestCase(req: express.Request, res: 
 
     try {
         const testCaseId = req.params.testCaseId;
-        const results = await getAllValidationTagsOfTestCaseService(testCaseId);
+        let results = await getAllValidationTagsOfTestCaseService(testCaseId, req);
+        
         res.status(200).json({
             status: 'success',
             resultsLength: results.length,

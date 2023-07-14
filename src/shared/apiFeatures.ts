@@ -18,15 +18,19 @@ class APIFeatures {
     return APIFeatures.instance;
   }
 
+  getQuery() { 
+    return this.query;
+  }
+
   filter() {
     const queryObj = { ...this.queryString };
-    const excludedFields = ["page", "sort", "limit", "fields", "select"];
+    const excludedFields = ["page", "sort", "limit", "fields", "select", "databaseName"];
     excludedFields.forEach((el) => delete queryObj[el]);
 
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\bgte|gt|lte|lt\b/g, (match) => `$${match}`);
 
-      this.query = this.query.find(JSON.parse(queryStr));
+    this.query = this.query.find(JSON.parse(queryStr));
       
     return this;
   }

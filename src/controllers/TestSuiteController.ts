@@ -19,7 +19,7 @@ export async function getTestSuiteById(request: express.Request, response: expre
 export async function getAllTestSuites(request: express.Request, response: express.Response) {
     try {
         const page: number = parseInt(request.query.page as string, 10) || 1;
-        const limit: number = parseInt(request.query.limit as string, 10) || 10;
+        const limit: number = parseInt(request.query.limit as string, 10) || 100;
         let queryObject: {[key: string]: any} = {
             "status": request.query.status || "",
             'metaData.name': request.query.name || "",

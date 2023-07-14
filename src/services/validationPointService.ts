@@ -1,3 +1,4 @@
+import express from 'express'
 import { ObjectId, Types } from "mongoose";
 import { ValidationPointBase, validationPointModel } from "../model/ValidationPoint";
 import {ValidationPointResultInterface, ValidationPointUpdate } from '../interfaces/ValidationPointResultInterface';
@@ -6,6 +7,7 @@ import validationTagModel from "../model/ValidationTag";
 import { flattenObject } from "../shared/utils";
 import { testSuiteModel } from "../model/TestSuite";
 import testCaseModel from "../model/TestCase";
+import APIFeatures from "./../shared/apiFeatures";
 
 
 
@@ -216,14 +218,15 @@ export async function  updateParentsEndDate(validationPoint: ValidationPointBase
     ])
 }
 
-export async function getAllValidationPointsOfvalidationTagService(testCaseId: string) {
+export async function getAllValidationPointsOfvalidationTagService(testCaseId: string, req: express.Request) {
     try {
         const validationTagData = await validationTagModel.findById(testCaseId, { '_v': 0 }).exec()
         if (!validationTagData) { 
             throw new Error(`ValidationTag with id '${testCaseId}' not found`)
         }
-        const results = await validationPointModel.find({ '_id': { $in: validationTagData.validationPointRefs } }).exec()
-        return results
+        let query = validationPointModel.find({ '_id': { $in: validationTagData.validationPointRefs } })
+        let api = APIFeatures.getInstance(query, req.query).filter().sort().limitFields().paginate()
+        return api.getQuery().exec()
     }
     catch (err: any) {
         throw new Error(`ValidationTag with id '${testCaseId}' not found`)

@@ -64,7 +64,7 @@ export async function updatingTestCase(req: express.Request, res: express.Respon
 export async function getAllTestcasesOfTestSuite(req: express.Request, res: express.Response) {
     try {
         
-        const results = await getAllTestcasesOfTestSuiteService(req.params.testSuiteId)
+        const results = await getAllTestcasesOfTestSuiteService(req.params.testSuiteId, req)
         res.status(200).json({
             status: 'success',
             resultsLength: results.length,

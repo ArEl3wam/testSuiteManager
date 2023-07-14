@@ -1,3 +1,4 @@
+import express from 'express';
 import { Types } from "mongoose";
 import validationTagModel from "../model/ValidationTag";
 import validationPointModel from "../model/ValidationPoint";
@@ -6,6 +7,8 @@ import { LinkingResourcesError, NotFoundError } from "../shared/errors";
 import { _idToid, flattenObject } from "../shared/utils";
 import { ValidationTagInsertion, ValidationTagUpdate, ValidationTagListingOptions } from "../interfaces/validationTagInterfaces";
 import { addValidationTagToTestCase } from "./testCaseService";
+import APIFeatures from "./../shared/apiFeatures";
+
 const qs = require('qs');
 const testSuiteModel = require('../model/TestSuite').testSuiteModel;
 
@@ -369,14 +372,21 @@ export async function updateValidationTag(validationTagId: string, reqBody: Vali
 
 }
 
-export async function getAllValidationTagsOfTestCaseService(testCaseId: string) {
-    try { 
-        const testCaseData = await testCaseModel.findById(testCaseId);
+
+export async function getAllValidationTagsOfTestCaseService(testCaseId: string, req: express.Request) {
+    try {
+        
+        let testCaseData = await testCaseModel.findById(testCaseId);
+        
+        
         if (!testCaseData) {
             throw new NotFoundError(`Test case with id ${testCaseId} not found!`);
         }
-        const results = await validationTagModel.find({ '_id': { $in: testCaseData.validationTagRefs } }, { __v: false });
-        return results
+        
+        let query = validationTagModel.find({ '_id': { $in: testCaseData.validationTagRefs } }, { __v: false });
+        let api = APIFeatures.getInstance(query, req.query)
+        api.paginate().filter().sort().limitFields();
+        return api.getQuery().exec();
     }
     catch (err: any) {
         throw new NotFoundError((`Test case with id ${testCaseId} not found!`));
