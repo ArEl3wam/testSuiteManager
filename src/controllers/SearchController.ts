@@ -1,5 +1,5 @@
 import express from 'express'
-import { AggregationFeatures } from '../services/searchAggregationService'
+import { AggregationFeatures } from '../services/AggregationService'
 import { validationPointModel } from "../model/ValidationPoint";
 
 export async function SearchingResources(req: express.Request, res: express.Response) {
@@ -7,14 +7,14 @@ export async function SearchingResources(req: express.Request, res: express.Resp
         
         let aggregateFeatures = AggregationFeatures.getInstance(validationPointModel.aggregate())
         aggregateFeatures
-            .lookUP("validationtags", "validationTag")
-            .lookUP("testcases", "testCase")
-            .match(req.query.vp)
-            .match(req.query.vt, "validationTag")
-            .match(req.query.tc, "testCase")
-            .project()
-            .project("validationTag")
-            .project("testCase")
+            .search_lookup("validationtags", "validationTag")
+            .search_lookup("testcases", "testCase")
+            .search_match(req.query.vp)
+            .search_match(req.query.vt, "validationTag")
+            .search_match(req.query.tc, "testCase")
+            .search_project()
+            .search_project("validationTag")
+            .search_project("testCase")
             // .group(req.query.select)
             .paginate(req.query.page,req.query.limit)
         const results = await aggregateFeatures.getAggregation().exec()

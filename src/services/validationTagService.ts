@@ -1,13 +1,12 @@
 import express from 'express';
 import { Types } from "mongoose";
 import validationTagModel from "../model/ValidationTag";
-import validationPointModel from "../model/ValidationPoint";
 import testCaseModel from "../model/TestCase";
 import { LinkingResourcesError, NotFoundError } from "../shared/errors";
 import { _idToid, flattenObject } from "../shared/utils";
 import { ValidationTagInsertion, ValidationTagUpdate, ValidationTagListingOptions } from "../interfaces/validationTagInterfaces";
 import { addValidationTagToTestCase } from "./testCaseService";
-import APIFeatures from "./../shared/apiFeatures";
+import { AggregationFeatures } from './AggregationService';
 
 const qs = require('qs');
 const testSuiteModel = require('../model/TestSuite').testSuiteModel;
@@ -378,15 +377,18 @@ export async function getAllValidationTagsOfTestCaseService(testCaseId: string, 
         
         let testCaseData = await testCaseModel.findById(testCaseId);
         
-        
         if (!testCaseData) {
             throw new NotFoundError(`Test case with id ${testCaseId} not found!`);
         }
-        
-        let query = validationTagModel.find({ '_id': { $in: testCaseData.validationTagRefs } }, { __v: false });
-        let api = APIFeatures.getInstance(query, req.query)
-        api.paginate().filter().sort().limitFields();
-        return api.getQuery().exec();
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 100;
+        let validationTags = await AggregationFeatures.getInstance(validationTagModel.aggregate())
+            .normal_match({ '_id': { $in: testCaseData.validationTagRefs } })
+            .normal_lookup("validationpoints", "validationPointRefs", "_id")
+            .count_project("ValidationPoints", "validationPointRefs")
+            .paginate(page, limit)
+            .getAggregation().exec();
+        return validationTags;
     }
     catch (err: any) {
         throw new NotFoundError((`Test case with id ${testCaseId} not found!`));

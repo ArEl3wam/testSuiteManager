@@ -1,6 +1,7 @@
 import express from 'express';
 const testSuiteModel = require('../model/TestSuite').testSuiteModel;
 import { _idToid } from "../shared/utils";
+import { AggregationFeatures } from "./../services/AggregationService";
 
 
 export async function getTestSuiteById(request: express.Request, response: express.Response) {
@@ -31,12 +32,14 @@ export async function getAllTestSuites(request: express.Request, response: expre
                 delete queryObject[key];
             }
         }
-        const testSuites = await testSuiteModel.find(queryObject)
-        .skip((page - 1) * limit)
-        .limit(limit);
-
-        const transformedTestSuites = testSuites.map((ts:typeof testSuiteModel) => _idToid<typeof testSuiteModel>(ts.toJSON()));
-        return response.json(transformedTestSuites);
+        let testSuites = await AggregationFeatures.getInstance(testSuiteModel.aggregate())
+            .normal_match(queryObject)
+            .normal_lookup("testcases", "testCaseRef", "_id")
+            .count_project("TestCases", "testCaseRef")
+            .paginate(page, limit)
+            .getAggregation().exec();
+        
+        return response.json(testSuites);
 
     } catch (err: any) {
         response.status(500).json({ message: err.message });

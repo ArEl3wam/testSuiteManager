@@ -4,8 +4,7 @@ import { TestCaseInsertion, TestCaseListingOptions, TestCaseUpdate } from "../in
 import testCaseModel from "../model/TestCase";
 import { LinkingResourcesError, NotFoundError } from "../shared/errors";
 import { _idToid, flattenObject, removeAttributes } from "../shared/utils";
-import APIFeatures from "./../shared/apiFeatures";
-import { application } from "express";
+import { AggregationFeatures } from "./AggregationService";
 const testSuiteModel = require('../model/TestSuite').testSuiteModel;
 
 
@@ -118,10 +117,15 @@ export async function getAllTestcasesOfTestSuiteService(testSuiteId: string, req
     try {
         
         const testSuiteData = await testSuiteModel.findById(testSuiteId, { '_v': 0 }).exec()
-        let query = testCaseModel.find({ '_id': { $in: testSuiteData.testCaseRef } })
-        
-        let api = APIFeatures.getInstance(query, req.query).filter().limitFields().sort().paginate()
-        return api.getQuery().exec()
+        const page = req.query.page ? parseInt(req.query.page as string) : 1
+        const limit = req.query.limit ? parseInt(req.query.limit as string) : 100
+        let testcases = await AggregationFeatures.getInstance(testCaseModel.aggregate())
+            .normal_match({ '_id': { $in: testSuiteData.testCaseRef } })
+            .normal_lookup("validationtags", "validationTagRefs", "_id")
+            .count_project("ValidationTags", "validationTagRefs")
+            .paginate(page, limit)
+            .getAggregation().exec()
+        return testcases
     }
     catch (err: any) {
         console.log(err);
