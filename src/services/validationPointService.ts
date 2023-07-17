@@ -148,23 +148,20 @@ const fixOut = (nestedLevels: any[]) => {
     })
 }
 
-export async function parseValidationPointResults(requestBody: object): Promise<ValidationPointResultInterface[] | null> {
-    const validationPointResults: ValidationPointResultInterface[] = [];
-  
-    for (let key in requestBody) {
-      if (requestBody.hasOwnProperty(key)) {
-        const vp: ValidationPointResultInterface = {
-          name: key,
-          status: (requestBody as { [key: string]: any })[key].status,
-          expected: (requestBody as { [key: string]: any })[key].expected,
-          actual: (requestBody as { [key: string]: any })[key].actual,
-          tolerance: (requestBody as { [key: string]: any })[key].tolerance,
-        };
-        validationPointResults.push(vp);
-      }
-    }
-  
-    return validationPointResults.length > 0 ? validationPointResults : null;
+export function parseValidationPointResults(requestBody: Record<string, any>): any{
+        const validationPointResults: any = [];
+    
+        for (let key in requestBody) {
+            if (requestBody.hasOwnProperty(key)) {
+                const vp: any = {
+                    name: key,
+                    ...requestBody[key]
+                };
+                validationPointResults.push(vp);
+            }
+        }
+    
+        return validationPointResults.length > 0 ? validationPointResults : null;
 }
 
 export async function addValidationPointToValidationTag(validationTagId: string, validationPoint: { id?: Types.ObjectId, _id?: Types.ObjectId } ) {

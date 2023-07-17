@@ -79,7 +79,7 @@ export interface ValidationPointBase {
             id: Types.ObjectId
         }
     },
-    results: ValidationPointResultInterface[],
+    results: [],
     status: boolean,
     creation_date: Date
 }
