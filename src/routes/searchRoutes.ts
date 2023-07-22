@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { SearchingResources } from "../controllers/SearchController";
+import { getUniqueFilters,searchByFilters } from "../controllers/SearchController";
 
 export const SearchRouter = Router()
 
-SearchRouter.get('/search', SearchingResources)
+SearchRouter.get('/search', getUniqueFilters)
+SearchRouter.post('/search', searchByFilters)

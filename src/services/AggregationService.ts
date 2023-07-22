@@ -1,18 +1,18 @@
-export class AggregationFeatures{
-    private static instance: AggregationFeatures;
+export class AggregationWrapper{
+    private static instance: AggregationWrapper;
     private aggregation: any;
     
     private constructor(aggregation: any) {
         this.aggregation = aggregation;
     }
     
-    static getInstance(aggregation: any): AggregationFeatures {
-        if (!AggregationFeatures.instance) {
-            AggregationFeatures.instance = new AggregationFeatures(aggregation);
+    static getInstance(aggregation: any): AggregationWrapper {
+        if (!AggregationWrapper.instance) {
+            AggregationWrapper.instance = new AggregationWrapper(aggregation);
         } else {
-            AggregationFeatures.instance.aggregation = aggregation;
+            AggregationWrapper.instance.aggregation = aggregation;
         }
-        return AggregationFeatures.instance;
+        return AggregationWrapper.instance;
     }
 
     search_lookup(collectionName: string, localFieldName: string) {
@@ -24,12 +24,12 @@ export class AggregationFeatures{
         })
         return this;
     }
-    normal_lookup(from: string, localFieldName: string, foreignFieldName: string) {
+    lookup(from: string, localFieldName: string, foreignFieldName: string, as: string = localFieldName) {
         this.aggregation.lookup({
             from: from,
             localField: localFieldName,
             foreignField: foreignFieldName,
-            as: localFieldName
+            as: as
         })
         return this ;
     }
@@ -62,8 +62,12 @@ export class AggregationFeatures{
         })
         return this;
     }
-    normal_match(query: any) {
+    match(query: any) {
         this.aggregation.match(query)
+        return this;
+    }
+    unwind(localFieldName: string) {
+        this.aggregation.unwind(localFieldName)
         return this;
     }
 
@@ -118,16 +122,9 @@ export class AggregationFeatures{
         this.aggregation.sort(sort)
         return this;
     }
-    group(selectedView: any) {
-        // if (!selectedView || selectedView.toLowerCase() === "vp") {
-        //     return this;
-        // }
-        // this.aggregation.group({
-        //     _id: `$${selectedView}._id`,
-        //     children: { $push: "$$ROOT" }
-        //     }
-        // )
-        // return this;
+    group(query: any) {
+        this.aggregation.group(query)
+        return this;
         
     }
     paginate(page: any = 1, limit: any = 100) {

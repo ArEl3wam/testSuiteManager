@@ -1,7 +1,7 @@
 import express from 'express';
 const testSuiteModel = require('../model/TestSuite').testSuiteModel;
 import { _idToid } from "../shared/utils";
-import { AggregationFeatures } from "./../services/AggregationService";
+import { AggregationWrapper } from "./../services/AggregationService";
 
 
 export async function getTestSuiteById(request: express.Request, response: express.Response) {
@@ -32,14 +32,19 @@ export async function getAllTestSuites(request: express.Request, response: expre
                 delete queryObject[key];
             }
         }
-        let testSuites = await AggregationFeatures.getInstance(testSuiteModel.aggregate())
-            .normal_match(queryObject)
-            .normal_lookup("testcases", "testCaseRef", "_id")
+        let testSuites = await AggregationWrapper.getInstance(testSuiteModel.aggregate())
+            .match(queryObject)
+            .lookup("testcases", "testCaseRef", "_id")
             .count_project("TestCases", "testCaseRef")
             .paginate(page, limit)
             .getAggregation().exec();
         
-        return response.json(testSuites);
+        return response.json({
+            status: 'success',
+            resultsLength: testSuites.length,
+            testSuites
+        }
+        );
 
     } catch (err: any) {
         response.status(500).json({ message: err.message });

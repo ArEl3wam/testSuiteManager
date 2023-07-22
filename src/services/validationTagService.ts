@@ -6,7 +6,7 @@ import { LinkingResourcesError, NotFoundError } from "../shared/errors";
 import { _idToid, flattenObject } from "../shared/utils";
 import { ValidationTagInsertion, ValidationTagUpdate, ValidationTagListingOptions } from "../interfaces/validationTagInterfaces";
 import { addValidationTagToTestCase } from "./testCaseService";
-import { AggregationFeatures } from './AggregationService';
+import { AggregationWrapper } from './AggregationService';
 
 const qs = require('qs');
 const testSuiteModel = require('../model/TestSuite').testSuiteModel;
@@ -382,9 +382,9 @@ export async function getAllValidationTagsOfTestCaseService(testCaseId: string, 
         }
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 100;
-        let validationTags = await AggregationFeatures.getInstance(validationTagModel.aggregate())
-            .normal_match({ '_id': { $in: testCaseData.validationTagRefs } })
-            .normal_lookup("validationpoints", "validationPointRefs", "_id")
+        let validationTags = await AggregationWrapper.getInstance(validationTagModel.aggregate())
+            .match({ '_id': { $in: testCaseData.validationTagRefs } })
+            .lookup("validationpoints", "validationPointRefs", "_id")
             .count_project("ValidationPoints", "validationPointRefs")
             .paginate(page, limit)
             .getAggregation().exec();
