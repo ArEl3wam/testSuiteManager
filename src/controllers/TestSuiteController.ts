@@ -21,19 +21,8 @@ export async function getAllTestSuites(request: express.Request, response: expre
     try {
         const page: number = parseInt(request.query.page as string, 10) || 1;
         const limit: number = parseInt(request.query.limit as string, 10) || 100;
-        let queryObject: {[key: string]: any} = {
-            "status": request.query.status || "",
-            'metaData.name': request.query.name || "",
-            "metaData.executablePath": request.query.executablePath || "",
-            "metaData.author": request.query.author || ""
-        };
-        for (let key in queryObject) {
-            if (!queryObject[key]) {
-                delete queryObject[key];
-            }
-        }
         let testSuites = await AggregationWrapper.getInstance(testSuiteModel.aggregate())
-            .match(queryObject)
+            .filter(request.query)
             .lookup("testcases", "testCaseRef", "_id")
             .count_project("TestCases", "testCaseRef")
             .paginate(page, limit)
