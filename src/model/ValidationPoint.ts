@@ -3,7 +3,7 @@ import { ValidationPointResultInterface } from '../interfaces/ValidationPointRes
 const Schema = mongoose.Schema;
 const model = mongoose.model;
 
-const validationPointSchema = new Schema<ValidationPointBase>({
+let validationPointSchema = new Schema<ValidationPointBase>({
     metaData: {
         type: Schema.Types.Mixed,
         default: {},
@@ -83,6 +83,11 @@ export interface ValidationPointBase {
     status: boolean,
     creation_date: Date
 }
+validationPointSchema.index({ "parent.validationTag.id": 1 })
+validationPointSchema.index({ "parent.testCase.id": 1 })
+validationPointSchema.index({ "parent.testSuite.id": 1 })
+validationPointSchema.index({ "status": 1 })
+
 
 export const validationPointModel = model<ValidationPointBase>('validationPoint', validationPointSchema);
 export default validationPointModel;

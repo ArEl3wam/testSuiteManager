@@ -1,7 +1,7 @@
 import express from 'express';
 const testSuiteModel = require('../model/TestSuite').testSuiteModel;
 import { _idToid } from "../shared/utils";
-import { AggregationWrapper } from "./../services/AggregationService";
+import { AggregationWrapper } from "../services/AggregationWrapper";
 
 
 export async function getTestSuiteById(request: express.Request, response: express.Response) {

@@ -15,15 +15,6 @@ export class AggregationWrapper{
         return AggregationWrapper.instance;
     }
 
-    search_lookup(collectionName: string, localFieldName: string) {
-        this.aggregation.lookup({
-            from: collectionName,
-            localField: "parent."+localFieldName+".id",
-            foreignField: "_id",
-            as: localFieldName
-        })
-        return this;
-    }
     lookup(from: string, localFieldName: string, foreignFieldName: string, as: string = localFieldName) {
         this.aggregation.lookup({
             from: from,
@@ -70,50 +61,20 @@ export class AggregationWrapper{
         this.aggregation.unwind(localFieldName)
         return this;
     }
-
-    search_project(localFieldName: string = "") {
-        localFieldName = this._modifyLocalName(localFieldName)
-
-        const projection: any = {}
-        const fields: string[] = ['parent', '__v', 'validationPointRefs', 'validationTagRefs', 'testCaseRef'];
-        fields.forEach(field => projection[localFieldName + field] = 0)
-        this.aggregation.project(projection)
+    project(query: any = {_id : 0}) {
+        this.aggregation.project(query)
         return this;
+    }
+    addFields(query: any) {
+        this.aggregation.addFields(query)
+        return this;
+    }
+    group(query: any) {
+        this.aggregation.group(query)
+        return this;
+        
     }
     
-    search_match(query: any, localFieldName: string = "") {
-        if (!query) {
-            return this;
-        }
-        const match = this.flattenQueryObject(query,localFieldName);
-        
-        this.aggregation.match(match)
-        
-        return this;
-    }
-
-    flattenQueryObject(query_obj: any, parentKey = ''): any {
-        // the desire of this function to transfer the object to the form of {parentKey.key: value}
-        // example {a: {b: 1}} => {'a.b': 1}, {a: {b: {c: 1}}} => {'a.b.c': 1}
-        // this is needed for the correct operation of the match function
-        let result: any = {};
-
-        for (let key in query_obj) {
-            if (query_obj.hasOwnProperty(key)) {
-            const propName = parentKey ? `${parentKey}.${key}` : key;
-
-            if (typeof query_obj[key] === 'object' && query_obj[key] !== null) {
-                const nestedObj = this.flattenQueryObject(query_obj[key], propName);
-                result = { ...result, ...nestedObj };
-            } else {
-                result[propName] = query_obj[key];
-            }
-            }
-        }
-
-        return result;
-    }
-
     sort(sort: any = {}) {
         if (!sort) {
             return this;
@@ -121,11 +82,6 @@ export class AggregationWrapper{
         sort = sort.split(",").join(" ");
         this.aggregation.sort(sort)
         return this;
-    }
-    group(query: any) {
-        this.aggregation.group(query)
-        return this;
-        
     }
     paginate(page: any = 1, limit: any = 100) {
         const skip = (page - 1) * limit;
@@ -137,12 +93,6 @@ export class AggregationWrapper{
         return this.aggregation
     }
 
-    _modifyLocalName(localFieldName: string) {
-        if (localFieldName) {
-            localFieldName = localFieldName + "."
-        }
-        return localFieldName
-    }
 }
 
 

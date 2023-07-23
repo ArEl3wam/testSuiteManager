@@ -4,7 +4,7 @@ import { TestCaseInsertion, TestCaseListingOptions, TestCaseUpdate } from "../in
 import testCaseModel from "../model/TestCase";
 import { LinkingResourcesError, NotFoundError } from "../shared/errors";
 import { _idToid, flattenObject, removeAttributes } from "../shared/utils";
-import { AggregationWrapper } from "./AggregationService";
+import { AggregationWrapper } from "./AggregationWrapper";
 const testSuiteModel = require('../model/TestSuite').testSuiteModel;
 
 

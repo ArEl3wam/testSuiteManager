@@ -2,7 +2,7 @@ import mongoose, { Types } from 'mongoose';
 const Schema = mongoose.Schema;
 const model = mongoose.model;
 
-const testCaseSchema = new Schema<TestCaseBase>({
+let testCaseSchema = new Schema<TestCaseBase>({
     metaData: {
         type: Schema.Types.Mixed,
         default: {}
@@ -36,6 +36,8 @@ testCaseSchema.virtual('validationTags_count').get(function () {
 })
 
 
+testCaseSchema.index({ "parent.testSuite.id": 1 })
+testCaseSchema.index({ "status": 1 })
 
 
 const testCaseModel = model<TestCaseBase>('testCase',testCaseSchema);

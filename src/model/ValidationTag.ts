@@ -2,7 +2,7 @@ import mongoose, { Types } from 'mongoose';
 const Schema = mongoose.Schema;
 const model = mongoose.model;
 
-const validationTagSchema = new Schema<ValidationTagBase>({
+let validationTagSchema = new Schema<ValidationTagBase>({
     metaData: {
         type: Schema.Types.Mixed,
         default: {},
@@ -64,6 +64,10 @@ interface ValidationTagBase {
     creation_date: Date,
     end_date: Date
 }
+
+validationTagSchema.index({ "parent.testCase.id": 1 })
+validationTagSchema.index({ "parent.testSuite.id": 1 })
+validationTagSchema.index({ "status": 1 })
 
 const validationTagModel = model<ValidationTagBase>('validationTag', validationTagSchema);
 export default validationTagModel;

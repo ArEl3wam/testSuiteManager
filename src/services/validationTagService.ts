@@ -6,7 +6,7 @@ import { LinkingResourcesError, NotFoundError } from "../shared/errors";
 import { _idToid, flattenObject } from "../shared/utils";
 import { ValidationTagInsertion, ValidationTagUpdate, ValidationTagListingOptions } from "../interfaces/validationTagInterfaces";
 import { addValidationTagToTestCase } from "./testCaseService";
-import { AggregationWrapper } from './AggregationService';
+import { AggregationWrapper } from './AggregationWrapper';
 
 const qs = require('qs');
 const testSuiteModel = require('../model/TestSuite').testSuiteModel;
