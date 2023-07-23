@@ -11,6 +11,7 @@ import {valdationPointRouter} from "./routes/validationPointRoutes";
 import {databaseRouter} from "./routes/databaseRoutes";
 import {SearchRouter} from "./routes/searchRoutes";
 import { shutdownRouter } from "./routes/shutdownRouter"
+import { statisticsRouter } from "./routes/statisticsRoutes";
 import { swapDatabaseConnection } from "./controllers/databaseController"; 
 const cookieParser = require('cookie-parser');
 
@@ -51,6 +52,7 @@ export function createApp() {
   app.use(valdationPointRouter);
   app.use(SearchRouter);
   app.use(shutdownRouter);
+  app.use(statisticsRouter);
 
   const options = {
     definition: {
