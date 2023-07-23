@@ -123,6 +123,7 @@ export async function getAllTestcasesOfTestSuiteService(testSuiteId: string, req
             .match({ '_id': { $in: testSuiteData.testCaseRef } })
             .lookup("validationtags", "validationTagRefs", "_id")
             .count_project("ValidationTags", "validationTagRefs")
+            .filter(req.query)
             .paginate(page, limit)
             .getAggregation().exec()
         return testcases

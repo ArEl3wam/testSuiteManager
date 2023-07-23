@@ -98,6 +98,7 @@ export async function testSuiteAggregationBuilder(req: express.Request) {
         })
         .lookup("testcases", "testCaseRef", "_id")
         .count_project("TestCases", "testCaseRef")
+        .filter(req.query)
         .paginate(req.query.page, req.query.limit)
         .getAggregation()
         .exec()
@@ -132,6 +133,7 @@ export async function testCaseAggregationBuilder(req: express.Request) {
         })
         .lookup("validationtags", "validationTagRefs", "_id")
         .count_project("ValidationTags", "validationTagRefs")
+        .filter(req.query)
         .paginate(req.query.page, req.query.limit)
         .getAggregation().exec()
     
@@ -161,6 +163,7 @@ export async function validationTagAggregationBuilder(req: express.Request) {
         })
         .lookup("validationpoints", "validationPointRefs", "_id")
         .count_project("ValidationPoints", "validationPointRefs")
+        .filter(req.query)
         .paginate(req.query.page, req.query.limit)
         .getAggregation().exec()            
 
@@ -180,6 +183,7 @@ export async function validationPointAggregationBuilder(req: express.Request) {
         .lookup("testsuites", "parent.testSuite.id", "_id", "parent.testSuite")
         .match(testSuiteMatchGenerator(req.body.testSuites, "parent.testSuite"))
         .unwind("parent.testSuite")
+        .filter(req.query)
         .paginate(req.query.page, req.query.limit)
         .getAggregation()
         .exec()

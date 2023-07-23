@@ -53,6 +53,16 @@ export class AggregationWrapper{
         })
         return this;
     }
+    filter(query: any) {
+        const exculudeFields = ["page", "limit", "sort", "databaseName"];
+        for (let key in query) {
+            if (exculudeFields.includes(key)) {
+                delete query[key];
+            }
+        }
+        this.aggregation.match(query)
+        return this;
+    }
     match(query: any) {
         this.aggregation.match(query)
         return this;

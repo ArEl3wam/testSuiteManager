@@ -387,6 +387,7 @@ export async function getAllValidationTagsOfTestCaseService(testCaseId: string, 
             .lookup("validationpoints", "validationPointRefs", "_id")
             .count_project("ValidationPoints", "validationPointRefs")
             .paginate(page, limit)
+            .filter(req.query)
             .getAggregation().exec();
         return validationTags;
     }
