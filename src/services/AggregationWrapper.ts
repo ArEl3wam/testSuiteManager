@@ -54,13 +54,14 @@ export class AggregationWrapper{
         return this;
     }
     filter(query: any) {
+        let temp_query = JSON.parse(JSON.stringify(query));
         const exculudeFields = ["page", "limit", "sort", "databaseName"];
-        for (let key in query) {
+        for (let key in temp_query) {
             if (exculudeFields.includes(key)) {
-                delete query[key];
+                delete temp_query[key];
             }
         }
-        this.aggregation.match(query)
+        this.aggregation.match(temp_query)
         return this;
     }
     match(query: any) {
@@ -93,7 +94,8 @@ export class AggregationWrapper{
         this.aggregation.sort(sort)
         return this;
     }
-    paginate(page: any = 1, limit: any = 100) {
+    paginate(page: any = 1, limit: any = 100)
+    {   
         const skip = (page - 1) * limit;
         this.aggregation.skip(skip).limit(limit);
         return this;
