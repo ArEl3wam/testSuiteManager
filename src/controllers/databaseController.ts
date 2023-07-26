@@ -15,8 +15,15 @@ export async function getDatabaseUrls(request: express.Request, response: expres
 }
 
 export async function openDatabaseConnection(request: express.Request, response: express.Response) {
-    try{
-        const connection = await mongoose.connect(request.body.databaseUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+    const request_db_name : String = request.body.databaseUrl.split('/')[3];
+    
+    
+    if (request_db_name == mongoose.connection.name) {
+        return response.status(200).json({ message: `Database connection with ${request.body.databaseUrl} is already opened` });
+    }
+    try {
+        await mongoose.disconnect()
+        await mongoose.connect(request.body.databaseUrl, { useNewUrlParser: true, useUnifiedTopology: true })
         console.log(`Database connection with ${request.body.databaseUrl} is opened successfully`);
         return response.status(200).json({ message: `Database connection with ${request.body.databaseUrl} is opened successfully` });
     }    
@@ -26,16 +33,29 @@ export async function openDatabaseConnection(request: express.Request, response:
         return response.status(400).json({ message: err.message });
     }   
 }
-export async function closeDatabaseConnection(request: express.Request, response: express.Response) {
-    try{
-        await mongoose.disconnect()
-        console.log("Database connection is closed successfully");
-        
-        return response.status(200).json({ message: "Database connection is closed successfully" });
+export async function deleteDatabase(request: express.Request, response: express.Response) {
+    const db_name: String = request.body.databaseName;
+    const newDbUrl: string = `${process.env.DB_URL}${process.env.DB_PORT}/${db_name}`;
+    
+    try {
+        await mongoose.disconnect();
+        const connection = await mongoose.createConnection(newDbUrl);
+        await connection.dropDatabase();
+        return response.status(200).json({
+            status: 'success',
+            message: `Database ${db_name} is deleted successfully`
+        });
+
     }    
     catch (err: any) {
-        return response.status(400).json({ message: err.message });
-    }   
+        console.log(err.message);
+        return response.status(400).json({
+            status: 'fail',
+            message: err.message
+        });
+    }
+
+      
 }
 
 export async function swapDatabaseConnection(request: express.Request, response: express.Response, next: express.NextFunction) {
