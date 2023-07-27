@@ -68,6 +68,9 @@ interface ValidationTagBase {
 validationTagSchema.index({ "parent.testCase.id": 1 })
 validationTagSchema.index({ "parent.testSuite.id": 1 })
 validationTagSchema.index({ "status": 1 })
+validationTagSchema.index({ "validationPointRefs": 1 })
+validationTagSchema.index({ "creation_date": 1 })
+validationTagSchema.index({ "end_date": 1 })
 
 const validationTagModel = model<ValidationTagBase>('validationTag', validationTagSchema);
 export default validationTagModel;

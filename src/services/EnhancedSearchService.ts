@@ -112,9 +112,6 @@ export async function testCaseAggregationBuilder(req: express.Request) {
 
      const results = await AggregationWrapper.getInstance(testCaseModel.aggregate())
         .match(testCaseMatchGenerator(req.body.testCases))
-        .lookup("testsuites", "parent.testSuite.id", "_id", "parent.testSuite")
-        .unwind("parent.testSuite")
-        .match(testSuiteMatchGenerator(req.body.testSuites, "parent.testSuite"))
         .lookup("validationtags", "validationTagRefs", "_id")
         .unwind("validationTagRefs")
         .match(validationTagMatchGenerator(req.body.validationTags, "validationTagRefs"))
@@ -131,10 +128,13 @@ export async function testCaseAggregationBuilder(req: express.Request) {
             end_date: { $first: "$end_date" },
             
         })
+        .lookup("testsuites", "parent.testSuite.id", "_id", "parent.testSuite")
+        .match(testSuiteMatchGenerator(req.body.testSuites, "parent.testSuite"))
         .lookup("validationtags", "validationTagRefs", "_id")
         .count_project("ValidationTags", "validationTagRefs")
         .filter(req.query)
         .paginate(req.query.page, req.query.limit)
+        .unwind("parent.testSuite")
         .getAggregation().exec()
     
     return results
@@ -142,12 +142,6 @@ export async function testCaseAggregationBuilder(req: express.Request) {
 export async function validationTagAggregationBuilder(req: express.Request) {
     const results = await AggregationWrapper.getInstance(validationTagModel.aggregate())
         .match(validationTagMatchGenerator(req.body.validationTags))
-        .lookup("testsuites", "parent.testSuite.id", "_id", "parent.testSuite")
-        .unwind("parent.testSuite")
-        .match(testSuiteMatchGenerator(req.body.testSuites, "parent.testSuite"))
-        .lookup("testcases", "parent.testCase.id", "_id", "parent.testCase")
-        .unwind("parent.testCase")
-        .match(testCaseMatchGenerator(req.body.testCases, "parent.testCase"))
         .lookup("validationpoints", "validationPointRefs", "_id")
         .unwind("validationPointRefs")
         .match(validationPointMatchGenerator(req.body.validationPoints, "validationPointRefs"))
@@ -161,10 +155,16 @@ export async function validationTagAggregationBuilder(req: express.Request) {
             end_date: { $first: "$end_date" },
             
         })
+        .lookup("testcases", "parent.testCase.id", "_id", "parent.testCase")
+        .match(testCaseMatchGenerator(req.body.testCases, "parent.testCase"))
+        .lookup("testsuites", "parent.testSuite.id", "_id", "parent.testSuite")
+        .match(testSuiteMatchGenerator(req.body.testSuites, "parent.testSuite"))
+        .filter(req.query)
         .lookup("validationpoints", "validationPointRefs", "_id")
         .count_project("ValidationPoints", "validationPointRefs")
-        .filter(req.query)
         .paginate(req.query.page, req.query.limit)
+        .unwind("parent.testSuite")
+        .unwind("parent.testCase")
         .getAggregation().exec()            
 
     return results

@@ -4,6 +4,13 @@ import { mongo } from 'mongoose';
 
 
 export async function getDatabaseUrls(request: express.Request, response: express.Response) {
+    // check if there is a connection
+    if (!mongoose.connection.readyState) {
+        await mongoose.connect(`${process.env.DB_URL}${process.env.DB_PORT}/admin`, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+    }
     const databases = await mongoose.connections[0].db.admin().listDatabases();
     // skip admin, local, config databases
     const databasesNames = databases.databases
@@ -36,6 +43,13 @@ export async function openDatabaseConnection(request: express.Request, response:
 export async function deleteDatabase(request: express.Request, response: express.Response) {
     const db_name: String = request.body.databaseName;
     const newDbUrl: string = `${process.env.DB_URL}${process.env.DB_PORT}/${db_name}`;
+    
+    if (!db_name) {
+        return response.status(400).json({
+            status: 'fail',
+            message: 'invalid database name or invalid request body'
+        });
+    }
     
     try {
         await mongoose.disconnect();
