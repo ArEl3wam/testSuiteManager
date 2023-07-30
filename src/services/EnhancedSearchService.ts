@@ -8,7 +8,7 @@ import testCaseModel from "../model/TestCase";
 
 function testSuiteMatchGenerator(query: any, prefix: string = "") {
     prefix = prefix ? prefix + "." : "";
-    const testSuiteIdMatch = query._id ? {  [prefix + "_id"]: new mongoose.Types.ObjectId(query._id)} : {}
+    const testSuiteIdMatch = query._id ? {  [prefix + "_id"]: {$in : query._id.map((e) => new mongoose.Types.ObjectId(e))}} : {}
     const ownerMatch = query.owner.length ? { [prefix +"metaData.owner"]: { $in: query.owner } } : {};
     const versionMatch = query.version.length ? { [prefix + "metaData.version"]: { $in: query.version } } : {};
     const machineMatch = query.machine.length ? { [prefix + "metaData.machine"]: { $in: query.machine } } : {};
@@ -100,6 +100,7 @@ export async function testSuiteAggregationBuilder(req: express.Request) {
         .count_project("TestCases", "testCaseRef")
         .filter(req.query)
         .paginate(req.query.page, req.query.limit)
+        .addFields({"metaData.id": "$_id"})
         .getAggregation()
         .exec()
 
