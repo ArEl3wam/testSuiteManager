@@ -14,6 +14,7 @@ import { shutdownRouter } from "./routes/shutdownRouter"
 import { statisticsRouter } from "./routes/statisticsRoutes";
 import { swapDatabaseConnection } from "./controllers/databaseController"; 
 const cookieParser = require('cookie-parser');
+const cors = require("cors")
 
 
 export function createApp() {
@@ -32,11 +33,12 @@ export function createApp() {
       })
   })
 
-  app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-  });
+  const corsOptions = {
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    methods:["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD"],
+    origin: "*",
+  };
+  app.use(cors(corsOptions))
 
   app.use(express.json({
     
