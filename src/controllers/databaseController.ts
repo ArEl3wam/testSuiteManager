@@ -1,15 +1,17 @@
 const mongoose=require('mongoose');
 import express from 'express';
 import { mongo } from 'mongoose';
-
+async function connectToAdmin() {
+    await mongoose.connect(`${process.env.DB_URL}${process.env.DB_PORT}/admin`, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+}
 
 export async function getDatabaseUrls(request: express.Request, response: express.Response) {
     // check if there is a connection
     if (!mongoose.connection.readyState) {
-        await mongoose.connect(`${process.env.DB_URL}${process.env.DB_PORT}/admin`, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+        await connectToAdmin();
     }
     const databases = await mongoose.connections[0].db.admin().listDatabases();
     // skip admin, local, config databases
@@ -55,6 +57,7 @@ export async function deleteDatabase(request: express.Request, response: express
         await mongoose.disconnect();
         const connection = await mongoose.createConnection(newDbUrl);
         await connection.dropDatabase();
+        await connectToAdmin();
         return response.status(200).json({
             status: 'success',
             message: `Database ${db_name} is deleted successfully`
