@@ -49,7 +49,7 @@ export async function addValidationTag(req: express.Request, res: express.Respon
     vp.results= await parseValidationPointResults(req.body.results);
     vp.creation_date = req.body.creation_date
     if(!vp.results) {
-        return res.status(400).json({ message: "Invalid results" });
+        return res.status(400).json({ message: "Invalid validation point , this validaiton point has no results" });
     }
     
     await vp.save().then(async () => {
