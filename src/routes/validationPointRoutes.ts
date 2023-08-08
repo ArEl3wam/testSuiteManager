@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {getAllValidationPointsOfvalidationTag, listingValidationPoint , addValidationTag, updatingValidationPoint} from "../controllers/ValidationPointController";
+import {getAllValidationPointsOfvalidationTag, listingValidationPoint , addValidationPoint, updatingValidationPoint} from "../controllers/ValidationPointController";
 
 export const valdationPointRouter = Router()
 
@@ -19,4 +19,4 @@ valdationPointRouter
 
 valdationPointRouter
     .route('/TestSuite/:testSuiteId/TestCase/:testCaseId/ValidationTag/:validationTagId/ValidationPoint')
-    .post(addValidationTag);
+    .post(addValidationPoint);

@@ -29,7 +29,7 @@ export async function listingValidationPoint(req: express.Request, res: express.
     }
 }
 
-export async function addValidationTag(req: express.Request, res: express.Response) {
+export async function addValidationPoint(req: express.Request, res: express.Response) {
     const { testSuiteId, testCaseId, validationTagId } = req.params;
     const vp = new ValidationPoint();
     vp.parent = {
