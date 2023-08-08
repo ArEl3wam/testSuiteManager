@@ -1,7 +1,6 @@
 import express from 'express'
 import {
     addValidationPointToValidationTag,
-    listValidationPoints,
     parseValidationPointResults,
     updateParentsEndDate,
     updateValdationPoint,
@@ -12,9 +11,9 @@ const ValidationPoint = require('../model/ValidationPoint').ValidationPoint;
 
 export async function listingValidationPoint(req: express.Request, res: express.Response) {
     try {
-        const listingOptions: any = req.query
-        const vps = await listValidationPoints(listingOptions)
-        res.status(200).send(vps)
+        res.status(200).json({
+            status: 'success',
+        })
     } catch (err) {
         res.status(500).send('Something went wrong')
     }
