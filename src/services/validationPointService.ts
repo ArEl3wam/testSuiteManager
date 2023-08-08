@@ -160,7 +160,7 @@ export function parseValidationPointResults(requestBody: Record<string, any>): a
                 validationPointResults.push(vp);
             }
         }
-    
+        if (! validationPointResults ) return null;
         return validationPointResults.length > 0 ? validationPointResults : null;
 }
 
