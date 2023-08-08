@@ -6,13 +6,23 @@ import {
     updateValdationPoint,
     getAllValidationPointsOfvalidationTagService
 } from '../services/validationPointService'
+import {AggregationWrapper} from '../services/AggregationWrapper'
 const ValidationPoint = require('../model/ValidationPoint').ValidationPoint;
 
 
 export async function listingValidationPoint(req: express.Request, res: express.Response) {
     try {
+        const validationPoints = await AggregationWrapper.getInstance(ValidationPoint.aggregate())
+            .match({})
+            .filter(req.query)
+            .paginate(req.query.page, req.query.limit)
+            .getAggregation()
+            .exec()
+        
         res.status(200).json({
             status: 'success',
+            resultsLength: validationPoints.length,
+            validationPoints
         })
     } catch (err) {
         res.status(500).send('Something went wrong')

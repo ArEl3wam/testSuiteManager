@@ -1,5 +1,4 @@
 import mongoose, { Types } from 'mongoose';
-import { ValidationPointResultInterface } from '../interfaces/ValidationPointResultInterface';
 const Schema = mongoose.Schema;
 const model = mongoose.model;
 
