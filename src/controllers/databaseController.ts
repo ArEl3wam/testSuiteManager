@@ -17,7 +17,7 @@ export async function getDatabaseUrls(request: express.Request, response: expres
     // skip admin, local, config databases
     const databasesNames = databases.databases
         .map((database: any) => database.name)
-        .filter((databaseName: string) => !['admin', 'local', 'config']
+        .filter((databaseName: string) => !['admin', 'local', 'config', 'users', 'test']
         .includes(databaseName));
     
     return response.status(200).json({ databasesNames});
