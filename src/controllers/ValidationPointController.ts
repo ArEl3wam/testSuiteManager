@@ -31,20 +31,21 @@ export async function addValidationTag(req: express.Request, res: express.Respon
 
     const levelOrder = []
     const modifiedLevels = {}
-
-    for (let i = 0; i < levels.length; ++i) {
-        const [key, value] = Object.entries(levels[i])[0]
-        levelOrder.push(key)
-        Object.assign(modifiedLevels, {
-            [i]: `${key}:${value}`
-        })
+    if (levels) {
+        for (let i = 0; i < levels.length; ++i) {
+            const [key, value] = Object.entries(levels[i])[0]
+            levelOrder.push(key)
+            Object.assign(modifiedLevels, {
+                [i]: `${key}:${value}`
+            })
+        }
     }
     vp.metaData= req.body.metaData;
     vp.levelsOrder = levelOrder
     vp.modifiedLevels = modifiedLevels
-    vp.levels = levels.reduce((acc, cur) => {
+    vp.levels = levels?levels.reduce((acc, cur) => {
         return Object.assign(acc, cur)
-    }, {})
+    }, {}):{}
     vp.results= await parseValidationPointResults(req.body.results);
     vp.creation_date = req.body.creation_date
     if(!vp.results) {
