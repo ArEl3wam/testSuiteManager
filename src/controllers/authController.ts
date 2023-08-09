@@ -32,7 +32,7 @@ export const signup = catchAsync(
       { expiresIn: "10m" }
     );
 
-    const baseUrl = `${req.protocol}://${process.env.HOST}:${process.env.PORT}`;
+    const baseUrl = `${req.protocol}://${process.env.BACKEND_HOST}:${process.env.PORT}`;
     const text = `click here to activate: ${baseUrl}/verify/${verificationToken}`;
 
     return await sendEmail({
