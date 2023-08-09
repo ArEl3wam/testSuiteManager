@@ -75,7 +75,7 @@ export async function  updatingValidationPoint(req: express.Request, res: expres
     
     try {
         const { validationPointId } = req.params
-        const valdationPoint = await updateValdationPoint(validationPointId, req.body, )
+        const valdationPoint = await updateValdationPoint(validationPointId, req.body)
         res.status(200).send(valdationPoint)
     } catch (err: any) {
         res.status(500).send({
