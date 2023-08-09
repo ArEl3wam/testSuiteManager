@@ -8,4 +8,5 @@ export interface ValidationPointResultInterface {
 
 export interface ValidationPointUpdate {
     status: boolean
+    results: any
 }

@@ -52,11 +52,11 @@ export async function updatingTestCase(req: express.Request, res: express.Respon
     try {
         const testCase = await updateTestCase(testCaseId, updateData)
         res.status(200).send(testCase)
-    } catch (err: unknown) {
+    } catch (err: any) {
         if(err instanceof NotFoundError) {
             res.status(err.status).send({ msg: err.message })
         } else {
-            res.status(500).send()
+            res.status(500).send({msg: err.message})
         }
     }
 }
