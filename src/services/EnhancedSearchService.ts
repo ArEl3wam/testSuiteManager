@@ -95,23 +95,23 @@ function validationTagMatchGenerator(query: any, prefix: string = "") {
     ? { [prefix + "metaData.name"]: { $in: query.name } }
     : {};
 
-  const validationTagExecutablePathMatch = query.executable_path.length
-    ? {
-        [prefix + "metaData.metaData.Executable Path"]: {
-          $in: query.executable_path,
-        },
-      }
-    : {};
+  // const validationTagExecutablePathMatch = query.executable_path.length
+  //   ? {
+  //       [prefix + "metaData.metaData.Executable Path"]: {
+  //         $in: query.executable_path,
+  //       },
+  //     }
+  //   : {};
 
-  const validationTagStatusMatch = query.status.length
-    ? { [prefix + "status"]: { $in: query.status } }
-    : {};
+  // const validationTagStatusMatch = query.status.length
+  //   ? { [prefix + "status"]: { $in: query.status } }
+  //   : {};
 
   return {
     ...validationTagIdMatch,
     ...validationTagNameMatch,
-    ...validationTagExecutablePathMatch,
-    ...validationTagStatusMatch,
+    // ...validationTagExecutablePathMatch,
+    // ...validationTagStatusMatch,
   };
 }
 
