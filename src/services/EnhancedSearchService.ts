@@ -103,15 +103,15 @@ function validationTagMatchGenerator(query: any, prefix: string = "") {
   //     }
   //   : {};
 
-  // const validationTagStatusMatch = query.status.length
-  //   ? { [prefix + "status"]: { $in: query.status } }
-  //   : {};
+  const validationTagStatusMatch = query.status.length
+    ? { [prefix + "status"]: { $in: query.status } }
+    : {};
 
   return {
     ...validationTagIdMatch,
     ...validationTagNameMatch,
     // ...validationTagExecutablePathMatch,
-    // ...validationTagStatusMatch,
+    ...validationTagStatusMatch,
   };
 }
 
