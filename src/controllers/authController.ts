@@ -35,7 +35,6 @@ export const signup = catchAsync(
     const baseUrl = `${req.protocol}://${process.env.BACKEND_HOST}:${process.env.PORT}`;
     const text = `click here to activate: ${baseUrl}/verify/${verificationToken}`;
 
-    console.log("will send an email");
     return await sendEmail({
       to: newUser.email,
       subject: "Email Verficiation",
@@ -78,16 +77,6 @@ export const login = catchAsync(
   }
 );
 
-export const protect = catchAsync(
-  async (req: any, res: any, next: express.NextFunction) => {
-    if (!req.user) {
-      return next(
-        new AppError("you must be logged in to access this resource", 401)
-      );
-    }
-    next();
-  }
-);
 
 export const authMiddleware = catchAsync(
   async (req: any, res: express.Response, next: express.NextFunction) => {
