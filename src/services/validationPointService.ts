@@ -183,16 +183,11 @@ export async function updateValdationPoint(validationPointId: string, updateInfo
     try {
         if(!updateInfo) return
         let validationPoint
-        if (updateInfo.status !== undefined) {
-            
-            validationPoint = await validationPointModel.findByIdAndUpdate(validationPointId, flattenObject(updateInfo), {
-                new: true
-            })
-            
-        }
-        else {
-            validationPoint = await validationPointModel.findByIdAndUpdate(validationPointId, {"results":parseValidationPointResults(updateInfo.results)})
-        }
+        
+        validationPoint = await validationPointModel.findByIdAndUpdate(validationPointId, updateInfo, {
+            new: true
+        })
+        
         if(!validationPoint) throw new NotFoundError('ValidationPoint Not found')
             return validationPoint
         

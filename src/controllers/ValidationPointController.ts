@@ -56,7 +56,7 @@ export async function addValidationPoint(req: express.Request, res: express.Resp
     vp.levels = levels?levels.reduce((acc, cur) => {
         return Object.assign(acc, cur)
     }, {}):{}
-    vp.results= await parseValidationPointResults(req.body.results);
+    vp.results= req.body.results;    
     vp.creation_date = req.body.creation_date
     if(!vp.results) {
         return res.status(400).json({ message: "Invalid validation point , this validaiton point has no results" });

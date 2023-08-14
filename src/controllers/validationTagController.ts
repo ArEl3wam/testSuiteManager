@@ -104,11 +104,11 @@ export async function fetchValidationTagsForTestSuite(req: express.Request, res:
     try {
         const validationTags = await getValidationTagsForTestSuite(filters);
         res.status(200).send(validationTags);
-    } catch (err: unknown) {
+    } catch (err: any) {
         if (err instanceof NotFoundError || err instanceof LinkingResourcesError) {
             res.status(err.status).send({ message: err.message });
         } else {
-            res.status(500).send({ message: 'Server Error' });
+            res.status(500).send({ message: err.message});
         }
     }
 }
@@ -120,11 +120,11 @@ export async function changeValidationTag(req: express.Request, res: express.Res
     try {
         const updatedValidationTag = await updateValidationTag(validationTagId, validationTagInfo);
         res.status(200).send(updatedValidationTag);
-    } catch (err: unknown) {
+    } catch (err: any) {
         if (err instanceof NotFoundError || err instanceof LinkingResourcesError) {
             res.status(err.status).send({ message: err.message });
         } else {
-            res.status(500).send({ message: 'Server Error' });
+            res.status(500).send({ message: err.message });
         }
     }
 }
