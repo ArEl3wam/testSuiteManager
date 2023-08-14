@@ -80,6 +80,7 @@ export function createApp() {
     ) => {
       res.status(err.status || 500);
       res.json({
+        status: "fail",
         error: {
           message: err.message || "Internal Server Error",
         },

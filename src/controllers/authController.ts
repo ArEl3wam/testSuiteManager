@@ -35,6 +35,7 @@ export const signup = catchAsync(
     const baseUrl = `${req.protocol}://${process.env.BACKEND_HOST}:${process.env.PORT}`;
     const text = `click here to activate: ${baseUrl}/verify/${verificationToken}`;
 
+    console.log("will send an email");
     return await sendEmail({
       to: newUser.email,
       subject: "Email Verficiation",
@@ -61,6 +62,14 @@ export const login = catchAsync(
     if (!user || !(await user.correctPassword(password, user.password))) {
       return next(new AppError("Incorrect Credentials", 401));
     }
+
+    if (!user.isVerified)
+      return next(new AppError("Please verify your account first.", 401));
+
+    if (!user.isActive)
+      return next(
+        new AppError("Please contact admin to activate your email.", 401)
+      );
 
     res.status(200).json({
       status: "success",
@@ -98,8 +107,13 @@ export const authMiddleware = catchAsync(
     if (!user)
       return next(new AppError("This user does no longer exist.", 401));
 
+    if (!user.isVerified)
+      return next(new AppError("Please verify your account first.", 401));
+
     if (!user.isActive)
-      return next(new AppError("Please activate your account first!", 401));
+      return next(
+        new AppError("Please contact admin to activate your email.", 401)
+      );
 
     if (user.changedPasswordAfter(new Date(payload.iat * 1000)))
       return next(
@@ -125,13 +139,10 @@ export const verify = catchAsync(
     const User = getUserModel();
     const user = await User.findOneAndUpdate(
       { _id: payload.id },
-      { isActive: true }
+      { isVerified: true }
     );
     if (!user) return next(new AppError("This user doesn't exist", 404));
 
-    res.status(200).json({
-      status: "success",
-      message: "Account is activated successfully!",
-    });
+    res.status(200).redirect("/login");
   }
 );

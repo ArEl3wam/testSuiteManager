@@ -10,6 +10,7 @@ export interface IUser {
   passwordChangedAt: Date;
   isAdmin: boolean;
   isActive: boolean;
+  isVerified: boolean;
 
   changedPasswordAfter: (timeStamp: Date) => boolean;
   getToken: (extra_payload?: object, token_options?: object) => string;
@@ -44,6 +45,11 @@ const UserSchema = new mongoose.Schema<IUser>({
   },
 
   isAdmin: {
+    type: Boolean,
+    default: false,
+  },
+
+  isVerified: {
     type: Boolean,
     default: false,
   },
