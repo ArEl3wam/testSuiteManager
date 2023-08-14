@@ -14,6 +14,7 @@ import { shutdownRouter } from "./routes/shutdownRouter";
 import { statisticsRouter } from "./routes/statisticsRoutes";
 import { swapDatabaseConnection } from "./controllers/databaseController";
 import { authRouter } from "./routes/authRoutes";
+import { adminRouter } from "./routes/adminRoutes";
 import { authMiddleware } from "./controllers/authController";
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -56,6 +57,7 @@ export function createApp() {
   app.use(shutdownRouter);
   app.use(statisticsRouter);
   app.use(authRouter);
+  app.use(adminRouter);
 
   const options = {
     definition: {
