@@ -4,7 +4,6 @@ import {
   openDatabaseConnection,
   deleteDatabase,
 } from "../controllers/databaseController";
-import { protect } from "../controllers/authController";
 
 export const databaseRouter = express.Router();
 databaseRouter
