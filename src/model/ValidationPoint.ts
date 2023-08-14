@@ -6,7 +6,7 @@ let validationPointSchema = new Schema<ValidationPointBase>({
     metaData: {
         type: Schema.Types.Mixed,
         default: {},
-        required: true
+        required: false
     },
     // type: {
     //     type: Schema.Types.String,
