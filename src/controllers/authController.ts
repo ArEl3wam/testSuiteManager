@@ -59,7 +59,7 @@ export const login = catchAsync(
     const user: any = await User.findOne({ email }).select("+password");
 
     if (!user || !(await user.correctPassword(password, user.password))) {
-      return next(new AppError("Incorrect Credentials", 401));
+      return next(new AppError("Incorrect email or password.", 401));
     }
 
     if (!user.isVerified)
@@ -67,7 +67,7 @@ export const login = catchAsync(
 
     if (!user.isActive)
       return next(
-        new AppError("Please contact admin to activate your email.", 401)
+        new AppError("Account is not activated by admin yet.", 401)
       );
 
     res.status(200).json({
@@ -94,14 +94,14 @@ export const authMiddleware = catchAsync(
     console.log(payload.id);
 
     if (!user)
-      return next(new AppError("This user does no longer exist.", 401));
+      return next(new AppError("This user does not exist.", 401));
 
     if (!user.isVerified)
       return next(new AppError("Please verify your account first.", 401));
 
     if (!user.isActive)
       return next(
-        new AppError("Please contact admin to activate your email.", 401)
+        new AppError("Account is not activated by admin yet.", 401)
       );
 
     if (user.changedPasswordAfter(new Date(payload.iat * 1000)))
