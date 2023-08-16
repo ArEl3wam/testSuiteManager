@@ -1,6 +1,9 @@
 import mongoose, { Types } from 'mongoose';
+import { DbConnectionHandler } from './../shared/DbConnectionsHandler'
+
 const Schema = mongoose.Schema;
-const model = mongoose.model;
+
+
 
 let validationTagSchema = new Schema<ValidationTagBase>({
     metaData: {
@@ -72,5 +75,7 @@ validationTagSchema.index({ "validationPointRefs": 1 })
 validationTagSchema.index({ "creation_date": 1 })
 validationTagSchema.index({ "end_date": 1 })
 
-const validationTagModel = model<ValidationTagBase>('validationTag', validationTagSchema);
-export default validationTagModel;
+export function getValidationTagModel(): mongoose.Model<ValidationTagBase>{
+    const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection();
+    return connection.model<ValidationTagBase>('validationTag', validationTagSchema);
+}

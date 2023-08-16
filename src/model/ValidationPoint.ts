@@ -1,6 +1,8 @@
 import mongoose, { Types } from 'mongoose';
+import { DbConnectionHandler } from './../shared/DbConnectionsHandler'
+
 const Schema = mongoose.Schema;
-const model = mongoose.model;
+
 
 let validationPointSchema = new Schema<ValidationPointBase>({
     metaData: {
@@ -88,12 +90,7 @@ validationPointSchema.index({ "parent.testSuite.id": 1 })
 validationPointSchema.index({ "status": 1 })
 
 
-export const validationPointModel = model<ValidationPointBase>('validationPoint', validationPointSchema);
-export default validationPointModel;
-
-
-const ValidationPoint = model('validationPoint', validationPointSchema);
-module.exports = { ValidationPoint, validationPointModel };
-
-
-
+export function getValidationPointModel(): mongoose.Model<ValidationPointBase> {
+    const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection();
+    return connection.model<ValidationPointBase>('validationPoint', validationPointSchema);
+}

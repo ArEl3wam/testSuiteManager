@@ -1,0 +1,60 @@
+import mongoose from 'mongoose'
+
+require('dotenv').config(
+    {
+        path: `${__dirname}/../.env`
+    }
+);
+
+export class DbConnectionHandler{
+
+    private static instance: DbConnectionHandler;
+    private logsDbConnection: any;
+    private usersDbConnection: any;
+
+    private constructor() {
+        const DB_URL: string = process.env['DB_URL'] || 'mongodb://127.0.0.1:';
+        const LOGS_DB_PORT: string = process.env['LOGS_DB_PORT'] || "27017";
+        const USERS_DB_PORT: string = process.env['USERS_DB_PORT'] || "27018";
+        this.logsDbConnection = mongoose.createConnection(
+            `${DB_URL}${LOGS_DB_PORT}/`, {
+            serverSelectionTimeoutMS: 3000
+            }
+        )
+        console.log(`connected to logs db on port ${LOGS_DB_PORT}`);
+        
+        // this.usersDbConnection = mongoose.createConnection(
+        //     `${DB_URL}${USERS_DB_PORT}/`,{
+        //     serverSelectionTimeoutMS: 3000
+        //     }
+        // );
+
+        // console.log(`connected to users db on port ${USERS_DB_PORT}`);
+    }
+    
+    public static initialize() {
+        DbConnectionHandler.getInstance();
+    }
+
+    public static getInstance(): DbConnectionHandler {
+        if (!DbConnectionHandler.instance) {
+            DbConnectionHandler.instance = new DbConnectionHandler();
+        }
+
+        return DbConnectionHandler.instance;
+    }
+
+    public getLogsDbConnection(): mongoose.Connection {
+        
+        return this.logsDbConnection;
+    }
+
+    public static updateLogsDbConnection(db_connection: mongoose.Connection) {
+        DbConnectionHandler.instance.logsDbConnection = db_connection;
+    }
+
+
+    public getUsersDbConnection() {
+        return this.usersDbConnection;
+    }
+}

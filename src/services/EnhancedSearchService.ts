@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 import express from "express";
 import { AggregationWrapper } from "../services/AggregationWrapper";
-import { validationPointModel } from "../model/ValidationPoint";
-import validationTagModel from "../model/ValidationTag";
-import { testSuiteModel } from "../model/TestSuite";
-import testCaseModel from "../model/TestCase";
+import { getValidationPointModel } from "../model/ValidationPoint";
+import {getValidationTagModel} from "../model/ValidationTag";
+import { getTestSuiteModel } from "../model/TestSuite";
+import {getTestCaseModel} from "../model/TestCase";
 
 function testSuiteMatchGenerator(query: any, prefix: string = "") {
   prefix = prefix ? prefix + "." : "";
@@ -157,7 +157,7 @@ export async function testSuiteAggregationBuilder(req: express.Request) {
   // 3shan el lookup by3ml join bs bybdl l attrbiute be list
   // fa lw unwind l awl, l lookup b3deha htgenerate list of list [ [] , [] , [] ]
   const results = await AggregationWrapper.getInstance(
-    testSuiteModel.aggregate()
+    getTestSuiteModel().aggregate()
   )
     .match(testSuiteMatchGenerator(req.body.testSuites))
     .lookup("testcases", "testCaseRef", "_id")
@@ -204,7 +204,7 @@ export async function testSuiteAggregationBuilder(req: express.Request) {
 
 export async function testCaseAggregationBuilder(req: express.Request) {
   const results = await AggregationWrapper.getInstance(
-    testCaseModel.aggregate()
+    getTestCaseModel().aggregate()
   )
     .match(testCaseMatchGenerator(req.body.testCases))
     .lookup("validationtags", "validationTagRefs", "_id")
@@ -243,7 +243,7 @@ export async function testCaseAggregationBuilder(req: express.Request) {
 }
 export async function validationTagAggregationBuilder(req: express.Request) {
   const results = await AggregationWrapper.getInstance(
-    validationTagModel.aggregate()
+    getValidationTagModel().aggregate()
   )
     .match(validationTagMatchGenerator(req.body.validationTags))
     .lookup("validationpoints", "validationPointRefs", "_id")
@@ -282,7 +282,7 @@ export async function validationPointAggregationBuilder(req: express.Request) {
   // we need to make it faster as much as possible
 
   const results = await AggregationWrapper.getInstance(
-    validationPointModel.aggregate()
+    getValidationPointModel().aggregate()
   )
     .match(validationPointMatchGenerator(req.body.validationPoints))
     .lookup(
@@ -314,7 +314,7 @@ export async function validationPointAggregationBuilder(req: express.Request) {
 
 export async function filtersBuilder() {
   const test_suite_filters = await AggregationWrapper.getInstance(
-    testSuiteModel.aggregate()
+    getTestSuiteModel().aggregate()
   )
     .group({
       _id: null,
@@ -326,14 +326,13 @@ export async function filtersBuilder() {
       solution: { $addToSet: "$metaData.solution" },
       tool_name: { $addToSet: "$metaData.tool_name" },
       status: { $addToSet: "$status" },
-      // mii_enum: { $addToSet: "$metaData.design_info.dut_instance_info.sa_configuration.mii_enum" }
     })
     .project()
     .getAggregation()
     .exec();
 
   const test_case_filters = await AggregationWrapper.getInstance(
-    testCaseModel.aggregate()
+    getTestCaseModel().aggregate()
   )
     .group({
       _id: null,
@@ -344,7 +343,7 @@ export async function filtersBuilder() {
     .exec();
 
   const validation_tag_filters = await AggregationWrapper.getInstance(
-    validationTagModel.aggregate()
+    getValidationTagModel().aggregate()
   )
     .group({
       _id: null,
@@ -357,7 +356,7 @@ export async function filtersBuilder() {
     .exec();
 
   const validation_point_filters = await AggregationWrapper.getInstance(
-    validationPointModel.aggregate()
+    getValidationPointModel().aggregate()
   )
     .group({
       _id: null,

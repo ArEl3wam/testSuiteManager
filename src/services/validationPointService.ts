@@ -1,12 +1,11 @@
 import express from 'express'
-import { ObjectId, Types } from "mongoose";
-import { ValidationPointBase, validationPointModel } from "../model/ValidationPoint";
-import {ValidationPointResultInterface, ValidationPointUpdate } from '../interfaces/ValidationPointResultInterface';
+import { Types } from "mongoose";
+import { ValidationPointBase, getValidationPointModel } from "../model/ValidationPoint";
+import {ValidationPointUpdate } from '../interfaces/ValidationPointResultInterface';
 import { LinkingResourcesError, NotFoundError } from "../shared/errors";
-import validationTagModel from "../model/ValidationTag";
-import { flattenObject } from "../shared/utils";
-import { testSuiteModel } from "../model/TestSuite";
-import testCaseModel from "../model/TestCase";
+import {getValidationTagModel} from "../model/ValidationTag";
+import { getTestSuiteModel } from "../model/TestSuite";
+import {getTestCaseModel} from "../model/TestCase";
 import APIFeatures from "./../shared/apiFeatures";
 
 
@@ -19,7 +18,7 @@ export async function listValidationPoints(listingOptions: any) {
         throw new Error('Must include validation tag id!')
     }
 
-    const validationPoint = await validationPointModel.findOne({
+    const validationPoint = await getValidationPointModel().findOne({
         'parent.validationTag.id': validationTag.id
     })
     if(!validationPoint) {
@@ -27,7 +26,7 @@ export async function listValidationPoints(listingOptions: any) {
     }
 
     const levels = (validationPoint.levelsOrder) as any
-    const [{ deepestLevels }] = await validationPointModel.aggregate([
+    const [{ deepestLevels }] = await getValidationPointModel().aggregate([
         {
             '$match': {
                 'parent.validationTag.id': new Types.ObjectId(validationTag.id)
@@ -43,10 +42,9 @@ export async function listValidationPoints(listingOptions: any) {
         }
     ])
 
-    //console.log(deepestLevels, levels)
     const query = generateAggregationQuery(deepestLevels.length)
     console.dir(query, {depth: Infinity})
-    const validationPoints = await validationPointModel.aggregate([
+    const validationPoints = await getValidationPointModel().aggregate([
         {
             '$match': {
                 'parent.validationTag.id': new Types.ObjectId(validationTag.id)
@@ -165,7 +163,7 @@ export function parseValidationPointResults(requestBody: Record<string, any>): a
 
 export async function addValidationPointToValidationTag(validationTagId: string, validationPoint: { id?: Types.ObjectId, _id?: Types.ObjectId } ) {
     try {
-        await validationTagModel.findByIdAndUpdate(validationTagId, {
+        await getValidationTagModel().findByIdAndUpdate(validationTagId, {
             $push: {
                 validationPointRefs: (validationPoint.id) ? validationPoint.id : validationPoint._id
             }
@@ -184,7 +182,7 @@ export async function updateValdationPoint(validationPointId: string, updateInfo
         if(!updateInfo) return
         let validationPoint
         
-        validationPoint = await validationPointModel.findByIdAndUpdate(validationPointId, updateInfo, {
+        validationPoint = await getValidationPointModel().findByIdAndUpdate(validationPointId, updateInfo, {
             new: true
         })
         
@@ -201,17 +199,17 @@ export async function  updateParentsEndDate(validationPoint: ValidationPointBase
     const { testCase, testSuite, validationTag } = validationPoint.parent
 
     return Promise.allSettled([
-        testSuiteModel.findByIdAndUpdate(testSuite.id, {
+        getTestSuiteModel().findByIdAndUpdate(testSuite.id, {
             '$max': {
                 'end_date': validationPoint.creation_date
             }
         }),
-        testCaseModel.findByIdAndUpdate(testCase.id, {
+        getTestCaseModel().findByIdAndUpdate(testCase.id, {
             '$max': {
                 'end_date': validationPoint.creation_date
             }
         }),
-        validationTagModel.findByIdAndUpdate(validationTag.id, {
+        getValidationTagModel().findByIdAndUpdate(validationTag.id, {
             '$max': {
                 'end_date': validationPoint.creation_date
             }
@@ -221,11 +219,11 @@ export async function  updateParentsEndDate(validationPoint: ValidationPointBase
 
 export async function getAllValidationPointsOfvalidationTagService(testCaseId: string, req: express.Request) {
     try {
-        const validationTagData = await validationTagModel.findById(testCaseId, { '_v': 0 }).exec()
+        const validationTagData = await getValidationTagModel().findById(testCaseId, { '_v': 0 }).exec()
         if (!validationTagData) { 
             throw new Error(`ValidationTag with id '${testCaseId}' not found`)
         }
-        let query = validationPointModel.find({ '_id': { $in: validationTagData.validationPointRefs } })
+        let query = getValidationPointModel().find({ '_id': { $in: validationTagData.validationPointRefs } })
         let api = APIFeatures.getInstance(query, req.query).filter().sort().limitFields().paginate()
         return api.getQuery().exec()
     }
