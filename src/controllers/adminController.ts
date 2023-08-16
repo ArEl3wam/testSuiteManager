@@ -76,3 +76,11 @@ export const deleteUser = catchAsync(
     res.status(200).json({ message: "User is deleted." });
   }
 );
+
+export const getAllSolutions = catchAsync(
+  async (req: any, res: express.Response) => {
+    res
+      .status(200)
+      .json({ status: "success", data: Object.values(SolutionEnum) });
+  }
+);
