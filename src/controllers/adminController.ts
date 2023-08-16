@@ -73,7 +73,7 @@ export const deleteUser = catchAsync(
     const user = await User.findById(userId);
     if (!user) throw new AppError("This user does not exist.", 401);
     await user.deleteOne();
-    res.status(200).json({ message: "User is deleted." });
+    res.status(200).json({ status: "success", message: "User is deleted." });
   }
 );
 
