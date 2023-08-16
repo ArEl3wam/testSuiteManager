@@ -32,7 +32,7 @@ export const signup = catchAsync(
       { expiresIn: "10m" }
     );
 
-    const baseUrl = `${req.protocol}://${process.env.BACKEND_HOST}:${process.env.PORT}`;
+    const baseUrl = `${req.protocol}://${req.hostname}:${process.env.PORT}`;
     const text = `click here to activate: ${baseUrl}/verify/${verificationToken}`;
 
     return await sendEmail({
@@ -66,9 +66,7 @@ export const login = catchAsync(
       return next(new AppError("Please verify your account first.", 401));
 
     if (!user.isActive)
-      return next(
-        new AppError("Account is not activated by admin yet.", 401)
-      );
+      return next(new AppError("Account is not activated by admin yet.", 401));
 
     res.status(200).json({
       status: "success",
@@ -76,7 +74,6 @@ export const login = catchAsync(
     });
   }
 );
-
 
 export const authMiddleware = catchAsync(
   async (req: any, res: express.Response, next: express.NextFunction) => {
@@ -93,16 +90,13 @@ export const authMiddleware = catchAsync(
     const user = await User.findById(payload.id);
     console.log(payload.id);
 
-    if (!user)
-      return next(new AppError("This user does not exist.", 401));
+    if (!user) return next(new AppError("This user does not exist.", 401));
 
     if (!user.isVerified)
       return next(new AppError("Please verify your account first.", 401));
 
     if (!user.isActive)
-      return next(
-        new AppError("Account is not activated by admin yet.", 401)
-      );
+      return next(new AppError("Account is not activated by admin yet.", 401));
 
     if (user.changedPasswordAfter(new Date(payload.iat * 1000)))
       return next(
@@ -120,6 +114,7 @@ export const verify = catchAsync(
     res: express.Response,
     next: express.NextFunction
   ) => {
+    console.log("verify");
     const token = req.params.token;
     const payload: any = jwt.verify(token, <string>process.env.JWT_SECRET);
     console.log(payload);
@@ -132,6 +127,11 @@ export const verify = catchAsync(
     );
     if (!user) return next(new AppError("This user doesn't exist", 404));
 
-    res.status(200).redirect("/login");
+    console.log();
+    res
+      .status(301)
+      .redirect(
+        `${req.protocol}://${req.hostname}:${process.env.FRONTEND_PORT}/login`
+      );
   }
 );
