@@ -1,8 +1,8 @@
 import express from "express"; 
-import { validationPointModel } from "../model/ValidationPoint";
-import validationTagModel from "../model/ValidationTag";
-import { testSuiteModel } from "../model/TestSuite";
-import testCaseModel from "../model/TestCase";
+import { getValidationPointModel } from "../model/ValidationPoint";
+import {getValidationTagModel} from "../model/ValidationTag";
+import { getTestSuiteModel } from "../model/TestSuite";
+import {getTestCaseModel} from "../model/TestCase";
 
 async function getstatistics(databaseModel: any) {
     return {
@@ -15,10 +15,10 @@ async function getstatistics(databaseModel: any) {
 export async function getStatistics(req: express.Request, res: express.Response) {
     try {
         const data = {
-            testSuite: await getstatistics(testSuiteModel),
-            testCase: await getstatistics(testCaseModel),
-            validationTag: await getstatistics(validationTagModel),
-            validationPoint: await getstatistics(validationPointModel)
+            testSuite: await getstatistics(getTestSuiteModel()),
+            testCase: await getstatistics(getTestCaseModel()),
+            validationTag: await getstatistics(getValidationTagModel()),
+            validationPoint: await getstatistics(getValidationPointModel())
         }
         
         res.status(200).json({

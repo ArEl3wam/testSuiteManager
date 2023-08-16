@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
+import { DbConnectionHandler } from './../shared/DbConnectionsHandler'
+
 const Schema = mongoose.Schema;
-const model = mongoose.model;
+
 
 let testSuiteSchema = new Schema({
     metaData: Schema.Types.Mixed,
@@ -39,6 +41,8 @@ testSuiteSchema.index({ "metaData.tool_name": 1 })
 testSuiteSchema.index({ "status": 1 })
 
 
-export const testSuiteModel = model('testSuite', testSuiteSchema);
-// export default testSuiteModel;
-module.exports = { testSuiteModel };
+export function getTestSuiteModel() {
+    const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection();
+    return connection.model('testSuite', testSuiteSchema);
+}
+

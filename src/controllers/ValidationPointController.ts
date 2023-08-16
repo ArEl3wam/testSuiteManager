@@ -6,13 +6,16 @@ import {
     updateValdationPoint,
     getAllValidationPointsOfvalidationTagService
 } from '../services/validationPointService'
-import {AggregationWrapper} from '../services/AggregationWrapper'
-const ValidationPoint = require('../model/ValidationPoint').ValidationPoint;
+import { AggregationWrapper } from '../services/AggregationWrapper'
+import { getValidationPointModel, ValidationPointBase } from '../model/ValidationPoint'
+import mongoose, { Types } from 'mongoose';
+
+// const ValidationPoint = require('../model/ValidationPoint').getValidationPointModel();
 
 
 export async function listingValidationPoint(req: express.Request, res: express.Response) {
     try {
-        const validationPoints = await AggregationWrapper.getInstance(ValidationPoint.aggregate())
+        const validationPoints = await AggregationWrapper.getInstance(getValidationPointModel().aggregate())
             .match({})
             .filter(req.query)
             .paginate(req.query.page, req.query.limit)
@@ -31,11 +34,13 @@ export async function listingValidationPoint(req: express.Request, res: express.
 
 export async function addValidationPoint(req: express.Request, res: express.Response) {
     const { testSuiteId, testCaseId, validationTagId } = req.params;
+    const ValidationPoint: mongoose.Model<ValidationPointBase>  = getValidationPointModel();
     const vp = new ValidationPoint();
+
     vp.parent = {
-        validationTag: { id: validationTagId },
-        testCase: { id: testCaseId},
-        testSuite: {id: testSuiteId}
+        validationTag: { id: new Types.ObjectId(validationTagId) },
+        testCase: { id: new Types.ObjectId(testCaseId) },
+        testSuite: { id: new Types.ObjectId(testSuiteId) }
     }
     const levels: any[]= req.body.levels
 

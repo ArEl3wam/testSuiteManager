@@ -1,10 +1,10 @@
 import { PipelineStage } from "mongoose";
-import { ResourceTypes, SearchOptions } from "../interfaces/SearchInterface";
-import testCaseModel from "../model/TestCase";
-import { validationPointModel } from "../model/ValidationPoint";
-import validationTagModel from "../model/ValidationTag";
 import { flattenObject } from "../shared/utils";
-const testSuiteModel = require('../model/TestSuite').testSuiteModel;
+import { ResourceTypes, SearchOptions } from "../interfaces/SearchInterface";
+import {getTestCaseModel} from "../model/TestCase";
+import { getValidationPointModel } from "../model/ValidationPoint";
+import {getValidationTagModel} from "../model/ValidationTag";
+import {getTestSuiteModel} from "../model/TestSuite";
 
 
 
@@ -50,7 +50,7 @@ const lookupsOptions: Record<ResourceTypes, LookUpOption> = {
     },
 }
 
-const models = [testSuiteModel, testCaseModel, validationTagModel, validationPointModel]
+const models = [getTestSuiteModel(), getTestCaseModel(), getValidationTagModel(), getValidationPointModel()]
 
 export async function searchResources(searchOptions: SearchOptions) {
     const { select: rootResource, filteration } = searchOptions

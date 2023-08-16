@@ -1,6 +1,7 @@
 import mongoose, { Types } from 'mongoose';
+import { DbConnectionHandler } from './../shared/DbConnectionsHandler'
+
 const Schema = mongoose.Schema;
-const model = mongoose.model;
 
 let testCaseSchema = new Schema<TestCaseBase>({
     metaData: {
@@ -39,12 +40,11 @@ testCaseSchema.virtual('validationTags_count').get(function () {
 testCaseSchema.index({ "parent.testSuite.id": 1 })
 testCaseSchema.index({ "status": 1 })
 
+export function getTestCaseModel() {
+    const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection();
 
-const testCaseModel = model<TestCaseBase>('testCase',testCaseSchema);
-export default testCaseModel;
-
-
-
+    return connection.model<TestCaseBase>('testCase',testCaseSchema);;
+}
 interface TestCaseBase {
     metaData: object,
     status: boolean,

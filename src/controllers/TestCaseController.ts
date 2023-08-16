@@ -21,7 +21,7 @@ export async function fetchingTestCaseById(req: express.Request, res: express.Re
 }
 
 export async function creatingTestCase(req: express.Request, res: express.Response) {
-    const testSuiteId = req.params.testSuiteId    
+    const testSuiteId = req.params.testSuiteId 
     // TODO: add validation
     const testCaseInfo: TestCaseInsertion = req.body
     try {

@@ -1,29 +1,15 @@
 import http from 'http'
 import { createApp } from './app'
-import mongoose from 'mongoose'
+import {DbConnectionHandler} from './shared/DbConnectionsHandler'
 require('dotenv').config(
     {
         path: `${__dirname}/.env`
     }
 )
-const DB_PORT: string = process.env['DB_PORT'] || '27017';
-const DB_URL: string = `mongodb://localhost:${DB_PORT}/`;
-(async () => {
-    try {
-        await mongoose.connect(`${DB_URL}`, {
-            serverSelectionTimeoutMS: 3000,
-        });
-        console.log(`connected to ${DB_URL}`);
-        
-    } catch (err: any) {
-        console.log(err.message);
-    }
-})();
-
-
+DbConnectionHandler.initialize()
 const app = createApp()
 const server = http.createServer(app)
-const port = process.env['PORT']
+const port = process.env['BACKEND_PORT'] || 8080
 
 server.listen(port, () => {
     console.log(`Server is running on port ${port}`)
