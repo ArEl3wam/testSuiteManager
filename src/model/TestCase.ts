@@ -30,7 +30,7 @@ let testCaseSchema = new Schema<TestCaseBase>({
     creation_date: {
         type: Schema.Types.Date
     },
-    incremental_id: {
+    incrementalId: {
         type: Schema.Types.Number
     },
     
@@ -43,6 +43,7 @@ testCaseSchema.virtual('validationTags_count').get(function () {
 
 testCaseSchema.index({ "parent.testSuite.id": 1 })
 testCaseSchema.index({ "status": 1 })
+testCaseSchema.index({ "incrementalId": 1 })
 
 export function getTestCaseModel(databaseName: any) {
     const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection(databaseName);
@@ -61,5 +62,5 @@ interface TestCaseBase {
     validationTags_count?: number,
     end_date: Date,
     creation_date: Date
-    incremental_id: number
+    incrementalId: number
 }

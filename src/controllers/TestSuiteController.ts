@@ -48,7 +48,7 @@ export async function addTestSuite(request: express.Request, response: express.R
         const TestSuiteModel = getTestSuiteModel(databaseName);
         const testSuite = new TestSuiteModel(request.body);
         const countDocuments: number = await TestSuiteModel.countDocuments();
-        testSuite.incremental_id = countDocuments + 1;
+        testSuite.incrementalId = countDocuments + 1;
         const newTestSuite = await testSuite.save();
         const transformedTestSuite = _idToid(newTestSuite.toJSON());
 

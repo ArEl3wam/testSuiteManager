@@ -60,7 +60,10 @@ let validationPointSchema = new Schema<ValidationPointBase>({
     },
     creation_date: {
         type: Schema.Types.Date
-    }
+    },
+    incrementalId: {
+        type: Schema.Types.Number
+    },
 });
 
 export interface ValidationPointBase {
@@ -83,11 +86,13 @@ export interface ValidationPointBase {
     results: [],
     status: boolean,
     creation_date: Date
+    incrementalId: number
 }
 validationPointSchema.index({ "parent.validationTag.id": 1 })
 validationPointSchema.index({ "parent.testCase.id": 1 })
 validationPointSchema.index({ "parent.testSuite.id": 1 })
 validationPointSchema.index({ "status": 1 })
+validationPointSchema.index({ "incrementalId": 1 })
 
 
 export function getValidationPointModel(databaseName: any): mongoose.Model<ValidationPointBase> {
