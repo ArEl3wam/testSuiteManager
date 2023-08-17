@@ -23,7 +23,11 @@ let testSuiteSchema = new Schema({
     },
     creation_date: {
         type: Schema.Types.Date
-    }
+    },
+    incrementalId: {
+        type: Schema.Types.Number
+    },
+    
     
 }, { toJSON: { virtuals: true }});
 
@@ -39,10 +43,11 @@ testSuiteSchema.index({ "metaData.platform": 1 })
 testSuiteSchema.index({ "metaData.solution": 1 })
 testSuiteSchema.index({ "metaData.tool_name": 1 })
 testSuiteSchema.index({ "status": 1 })
+testSuiteSchema.index({ "incrementalId": 1 })
 
 
-export function getTestSuiteModel() {
-    const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection();
+export function getTestSuiteModel(databaseName: any) {
+    const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection(databaseName);
     return connection.model('testSuite', testSuiteSchema);
 }
 

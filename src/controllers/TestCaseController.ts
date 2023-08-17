@@ -5,10 +5,11 @@ import { TestCaseInsertion, TestCaseListingOptions } from '../interfaces/testCas
 import { NotFoundError } from '../shared/errors'
 
 export async function fetchingTestCaseById(req: express.Request, res: express.Response, next: express.NextFunction) {
+    const databaseName= req.query.databaseName;
     const id = req.params.testCaseId
 
     try {
-        const testCase = await getTestCaseById(id)
+        const testCase = await getTestCaseById(id, databaseName)
         res.status(200).send(testCase)
     } catch (err: unknown) {
         console.log(err)
@@ -21,11 +22,12 @@ export async function fetchingTestCaseById(req: express.Request, res: express.Re
 }
 
 export async function creatingTestCase(req: express.Request, res: express.Response) {
+    const databaseName= req.query.databaseName;
     const testSuiteId = req.params.testSuiteId 
     // TODO: add validation
     const testCaseInfo: TestCaseInsertion = req.body
     try {
-        const testCase = await insertTestCase(testSuiteId, testCaseInfo)
+        const testCase = await insertTestCase(testSuiteId, testCaseInfo, databaseName)
         res.status(201).send(testCase)
     } catch (err: unknown) {
         res.status(400).send({ error: 'Error while creating test case.' })
@@ -36,8 +38,9 @@ export async function listingTestCases(req: express.Request, res: express.Respon
 
     // TODO: Options Validation is Required at somepoint
     const listingOptions: TestCaseListingOptions = req.query
+    const databaseName= req.query.databaseName;
     try {   
-        const testCases = await listTestCases(listingOptions)
+        const testCases = await listTestCases(listingOptions,databaseName)
         res.status(200).send(testCases)
     } catch (err: unknown) {
         res.status(500).send({ error: 'Server Error' })
@@ -49,8 +52,9 @@ export async function updatingTestCase(req: express.Request, res: express.Respon
 
     const { testCaseId } = req.params
     const updateData = req.body
+    const databaseName= req.query.databaseName;
     try {
-        const testCase = await updateTestCase(testCaseId, updateData)
+        const testCase = await updateTestCase(testCaseId, updateData, databaseName)
         res.status(200).send(testCase)
     } catch (err: any) {
         if(err instanceof NotFoundError) {

@@ -9,18 +9,18 @@ import { addValidationTagToTestCase } from "./testCaseService";
 import { AggregationWrapper } from './AggregationWrapper';
 import {getTestSuiteModel} from "../model/TestSuite";
 
-export async function insertValidationTagForTestCase(testSuiteId: string, testCaseId: string, validationTagInfo: ValidationTagInsertion) {
+export async function insertValidationTagForTestCase(testSuiteId: string, testCaseId: string, validationTagInfo: ValidationTagInsertion, databaseName: any) {
     let validationTagId: Types.ObjectId | undefined = undefined;
 
     try {
         // Check if test case exists
-        const testCase = await getTestCaseModel().findById(testCaseId, { validationTagRefs: false, __v: false }).exec();
+        const testCase = await getTestCaseModel(databaseName).findById(testCaseId, { validationTagRefs: false, __v: false }).exec();
         if (!testCase) {
             throw new NotFoundError(`Test Case with id '${testCaseId}' was not found!`);
         }
 
         // Check if test suite exists
-        const testSuite = await getTestSuiteModel().findById(testSuiteId, { testCaseRefs: false, validationTagRefs: false, __v: false }).exec();
+        const testSuite = await getTestSuiteModel(databaseName).findById(testSuiteId, { testCaseRefs: false, validationTagRefs: false, __v: false }).exec();
         if (!testSuite) {
             throw new NotFoundError(`Test Suite with id '${testSuiteId}' was not found!`);
         }
@@ -39,7 +39,7 @@ export async function insertValidationTagForTestCase(testSuiteId: string, testCa
                 id: new Types.ObjectId(testSuiteId)
             }
         };
-        const validationTag = await getValidationTagModel().create(validationTagInfo);
+        const validationTag = await getValidationTagModel(databaseName).create(validationTagInfo);
 
         // Remove __v and validationPointRefs from validationTag
         validationTag.__v = undefined;
@@ -49,24 +49,24 @@ export async function insertValidationTagForTestCase(testSuiteId: string, testCa
         validationTagId = validationTagReturned._id;
 
         // Add validation tag id to test case in the database
-        await addValidationTagToTestCase(testCaseId, { id: validationTagId });
+        await addValidationTagToTestCase(testCaseId, { id: validationTagId }, databaseName);
         return _idToid(validationTagReturned)
 
     } catch (err: unknown) {
         console.log(err);
         if (validationTagId) {
-            await getValidationTagModel().findByIdAndDelete(validationTagId);
+            await getValidationTagModel(databaseName).findByIdAndDelete(validationTagId);
         }
         throw err;
     }
 }
 
-export async function insertValidationTagForTestSuite(testSuiteId: string, validationTagInfo: ValidationTagInsertion) {
+export async function insertValidationTagForTestSuite(testSuiteId: string, validationTagInfo: ValidationTagInsertion, databaseName: any) {
     let validationTagId: Types.ObjectId | undefined = undefined;
 
     try {
         // Check if test suite exists
-        const testSuite = await getTestSuiteModel().findById(testSuiteId, { testCaseRefs: false, validationTagRefs: false, __v: false }).exec();
+        const testSuite = await getTestSuiteModel(databaseName).findById(testSuiteId, { testCaseRefs: false, validationTagRefs: false, __v: false }).exec();
         if (!testSuite) {
             throw new NotFoundError(`Test Suite with id '${testSuiteId}' was not found!`);
         }
@@ -77,7 +77,7 @@ export async function insertValidationTagForTestSuite(testSuiteId: string, valid
                 id: new Types.ObjectId(testSuiteId)
             }
         };
-        const validationTag = await getValidationTagModel().create(validationTagInfo);
+        const validationTag = await getValidationTagModel(databaseName).create(validationTagInfo);
 
         // Remove __v and validationPointRefs from validationTag
         validationTag.__v = undefined;
@@ -87,21 +87,21 @@ export async function insertValidationTagForTestSuite(testSuiteId: string, valid
         validationTagId = validationTagReturned._id;
 
         // Add validation tag id to test suite in the database
-        await addValidationTagToTestSuite(testSuiteId, { id: validationTagId });
+        await addValidationTagToTestSuite(testSuiteId, { id: validationTagId }, databaseName);
         return _idToid(validationTagReturned)
 
     } catch (err: unknown) {
         console.log(err);
         if (validationTagId) {
-            await getValidationTagModel().findByIdAndDelete(validationTagId);
+            await getValidationTagModel(databaseName).findByIdAndDelete(validationTagId);
         }
         throw err;
     }
 }
 
-export async function addValidationTagToTestSuite(testSuiteId: string, validationTag: { id?: Types.ObjectId, _id?: Types.ObjectId }) {
+export async function addValidationTagToTestSuite(testSuiteId: string, validationTag: { id?: Types.ObjectId, _id?: Types.ObjectId }, databaseName: any) {
     try {
-        const t = await getTestSuiteModel().findByIdAndUpdate(testSuiteId, {
+        const t = await getTestSuiteModel(databaseName).findByIdAndUpdate(testSuiteId, {
             $push: {
                 validationTagRefs: (validationTag.id) ? validationTag.id : validationTag._id
             }
@@ -112,8 +112,8 @@ export async function addValidationTagToTestSuite(testSuiteId: string, validatio
     }
 }
 
-export async function getValidationTag(validationTagId: string) {
-    const validationTag = await getValidationTagModel()
+export async function getValidationTag(validationTagId: string, databaseName: any) {
+    const validationTag = await getValidationTagModel(databaseName)
         .findById(validationTagId, { __v: false })
         .populate('validationPointRefs', { __v: false, parent: false })
         .exec();
@@ -140,7 +140,7 @@ export async function getValidationTag(validationTagId: string) {
 }
 
 
-export async function getValidationTags(filters: ValidationTagListingOptions) {
+export async function getValidationTags(filters: ValidationTagListingOptions, databaseName: any) {
 
     try {
         // TODO: add validationPoint filtering
@@ -169,7 +169,7 @@ export async function getValidationTags(filters: ValidationTagListingOptions) {
         //console.log(dotNotationOptions)
 
         // Get all validation tags, with validationPointRefs substituted with their actual documents
-        const query = getValidationTagModel()
+        const query = getValidationTagModel(databaseName)
             .find(dotNotationOptions, { __v: false })
             .populate('validationPointRefs', { __v: false, parent: false });
 
@@ -212,7 +212,7 @@ export async function getValidationTags(filters: ValidationTagListingOptions) {
     }
 }
 
-export async function getValidationTagsForTestCase(filters: ValidationTagListingOptions) {
+export async function getValidationTagsForTestCase(filters: ValidationTagListingOptions, databaseName: any) {
     try {
         // TODO: add validationPoint filtering
         const { skip, limit, testSuite, testCase, ...options } = filters;
@@ -243,7 +243,7 @@ export async function getValidationTagsForTestCase(filters: ValidationTagListing
         // console.log(dotNotationOptions)
 
         // Get all validation tags, with validationPointRefs substituted with their actual documents
-        const query = getValidationTagModel()
+        const query = getValidationTagModel(databaseName)
             .find(dotNotationOptions, { __v: false })
             .populate('validationPointRefs', { __v: false, parent: false });
 
@@ -284,7 +284,7 @@ export async function getValidationTagsForTestCase(filters: ValidationTagListing
     }
 }
 
-export async function getValidationTagsForTestSuite(filters: ValidationTagListingOptions) {
+export async function getValidationTagsForTestSuite(filters: ValidationTagListingOptions, databaseName: any) {
     try {
         if (filters.testCase) {
             throw new LinkingResourcesError(`Cannot filter by testCase when listing validation tags for test suite!`);
@@ -314,7 +314,7 @@ export async function getValidationTagsForTestSuite(filters: ValidationTagListin
         //console.log(dotNotationOptions)
 
         // Get all validation tags, with validationPointRefs substituted with their actual documents
-        const query = getValidationTagModel()
+        const query = getValidationTagModel(databaseName)
             .find(dotNotationOptions, { __v: false })
             .populate('validationPointRefs', { __v: false, parent: false });
 
@@ -355,9 +355,9 @@ export async function getValidationTagsForTestSuite(filters: ValidationTagListin
     }
 }
 
-export async function updateValidationTag(validationTagId: string, reqBody: ValidationTagUpdate) {
+export async function updateValidationTag(validationTagId: string, reqBody: ValidationTagUpdate, databaseName: any) {
     try {
-        const updatedValidationTag = await getValidationTagModel().findByIdAndUpdate(validationTagId, flattenObject(reqBody), { new: true, select: '-__v' });
+        const updatedValidationTag = await getValidationTagModel(databaseName).findByIdAndUpdate(validationTagId, flattenObject(reqBody), { new: true, select: '-__v' });
         if (!updatedValidationTag) {
             throw new NotFoundError(`Validation tag with id ${validationTagId} not found!`);
         }
@@ -372,15 +372,16 @@ export async function updateValidationTag(validationTagId: string, reqBody: Vali
 
 export async function getAllValidationTagsOfTestCaseService(testCaseId: string, req: express.Request) {
     try {
-        
-        let testCaseData = await getTestCaseModel().findById(testCaseId);
+        const databaseName= req.query.databaseName;
+
+        let testCaseData = await getTestCaseModel(databaseName).findById(testCaseId);
         
         if (!testCaseData) {
             throw new NotFoundError(`Test case with id ${testCaseId} not found!`);
         }
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 100;
-        let validationTags = await AggregationWrapper.getInstance(getValidationTagModel().aggregate())
+        let validationTags = await AggregationWrapper.getInstance(getValidationTagModel(databaseName).aggregate())
             .match({ '_id': { $in: testCaseData.validationTagRefs } })
             .lookup("validationpoints", "validationPointRefs", "_id")
             .count_project("ValidationPoints", "validationPointRefs")

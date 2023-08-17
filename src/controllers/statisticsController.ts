@@ -14,11 +14,12 @@ async function getstatistics(databaseModel: any) {
 
 export async function getStatistics(req: express.Request, res: express.Response) {
     try {
+        const databaseName= req.query.databaseName;
         const data = {
-            testSuite: await getstatistics(getTestSuiteModel()),
-            testCase: await getstatistics(getTestCaseModel()),
-            validationTag: await getstatistics(getValidationTagModel()),
-            validationPoint: await getstatistics(getValidationPointModel())
+            testSuite: await getstatistics(getTestSuiteModel(databaseName)),
+            testCase: await getstatistics(getTestCaseModel(databaseName)),
+            validationTag: await getstatistics(getValidationTagModel(databaseName)),
+            validationPoint: await getstatistics(getValidationPointModel(databaseName))
         }
         
         res.status(200).json({

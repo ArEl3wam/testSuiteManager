@@ -6,7 +6,7 @@ require("dotenv").config({
 
 export class DbConnectionHandler {
   private static instance: DbConnectionHandler;
-  private logsDbConnection: any;
+  private logsDbConnection: mongoose.Connection;
   private usersDbConnection: mongoose.Connection;
 
   private constructor() {
@@ -20,6 +20,7 @@ export class DbConnectionHandler {
       }
     );
     console.log(`connected to logs db on port ${LOGS_DB_PORT}`);
+    // private usersDbConnection: mongoose.Connection;
 
     this.usersDbConnection = mongoose.createConnection(
       `${DB_URL}${USERS_DB_PORT}/`,
@@ -43,7 +44,12 @@ export class DbConnectionHandler {
     return DbConnectionHandler.instance;
   }
 
-  public getLogsDbConnection(): mongoose.Connection {
+  public getLogsDbConnection(databaseName?: string): mongoose.Connection {
+    if (typeof databaseName !== "undefined") {
+      this.logsDbConnection = this.logsDbConnection.useDb(
+        databaseName.toString()
+      );
+    }
     return this.logsDbConnection;
   }
 

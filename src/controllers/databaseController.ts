@@ -1,5 +1,6 @@
 import express from 'express';
 import { DbConnectionHandler } from "./../shared/DbConnectionsHandler"
+import { getDatabasesNames, checkDuplicateDatabaseName } from "./../services/databaseService"
 
 let connection = DbConnectionHandler.getInstance().getLogsDbConnection();
 
@@ -10,15 +11,8 @@ function connectToAdmin() {
 }
 
 export async function getDatabaseUrls(request: express.Request, response: express.Response) {
-
-    const databases = await connection.db.admin().listDatabases();
-    // skip admin, local, config databases
-    const databasesNames = databases.databases
-        .map((database: any) => database.name)
-        .filter((databaseName: string) => !['admin', 'local', 'config', 'test']
-        .includes(databaseName));
     
-    return response.status(200).json({ databasesNames});
+    return response.status(200).json({ databasesNames: await getDatabasesNames()});
 }
 
 export async function openDatabaseConnection(request: express.Request, response: express.Response) {
@@ -64,13 +58,9 @@ export async function deleteDatabase(request: express.Request, response: express
     }
 }
 
-export async function swapDatabaseConnection(request: express.Request, response: express.Response, next: express.NextFunction) {
-    const db_name= request.query.databaseName;
+export async function AuthorizeDatabaseConnection(request: express.Request, response: express.Response, next: express.NextFunction) {
     
-    if (!db_name) {
-        return next();
-    }
-    connection = connection.useDb(db_name.toString());
-    DbConnectionHandler.updateLogsDbConnection(connection);
+    await checkDuplicateDatabaseName(request)
+    // TODO: authorize the user to access the database
     return next();
 }

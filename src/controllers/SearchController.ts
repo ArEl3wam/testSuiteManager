@@ -17,8 +17,8 @@ const builderMap: any = {
 
 export async function getUniqueFilters(req: express.Request, res: express.Response) {
     try {
-
-        const data = await filtersBuilder();
+        const databaseName= req.query.databaseName;
+        const data = await filtersBuilder(databaseName);
         res.status(200).json({ 
             status: 'success',
             data

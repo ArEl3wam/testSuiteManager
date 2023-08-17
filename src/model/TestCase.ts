@@ -30,6 +30,10 @@ let testCaseSchema = new Schema<TestCaseBase>({
     creation_date: {
         type: Schema.Types.Date
     },
+    incrementalId: {
+        type: Schema.Types.Number
+    },
+    
 }, { toJSON: { virtuals: true }});
 
 testCaseSchema.virtual('validationTags_count').get(function () {
@@ -39,9 +43,10 @@ testCaseSchema.virtual('validationTags_count').get(function () {
 
 testCaseSchema.index({ "parent.testSuite.id": 1 })
 testCaseSchema.index({ "status": 1 })
+testCaseSchema.index({ "incrementalId": 1 })
 
-export function getTestCaseModel() {
-    const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection();
+export function getTestCaseModel(databaseName: any) {
+    const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection(databaseName);
 
     return connection.model<TestCaseBase>('testCase',testCaseSchema);;
 }
@@ -57,4 +62,5 @@ interface TestCaseBase {
     validationTags_count?: number,
     end_date: Date,
     creation_date: Date
+    incrementalId: number
 }

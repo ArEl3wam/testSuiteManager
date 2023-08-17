@@ -50,6 +50,10 @@ function testSuiteMatchGenerator(query: any, prefix: string = "") {
     ? { [prefix + "status"]: { $in: query.status } }
     : {};
 
+  const incrementalId = query.incrementalId.length
+    ? { [prefix + "incrementalId"]: { $in: query.incrementalId } }
+    : {};
+
   return {
     ...testSuiteIdMatch,
     ...ownerMatch,
@@ -60,6 +64,7 @@ function testSuiteMatchGenerator(query: any, prefix: string = "") {
     ...solutionMatch,
     ...toolNameMatch,
     ...statusMatch,
+    ...incrementalId,
   };
 }
 
@@ -75,9 +80,13 @@ function testCaseMatchGenerator(query: any, prefix: string = "") {
   const testCaseStatusMatch = query.status.length
     ? { [prefix + "status"]: { $in: query.status } }
     : {};
+  const incrementalId = query.incrementalId.length
+    ? { [prefix + "incrementalId"]: { $in: query.incrementalId } }
+    : {};
   return {
     ...testCaseIdMatch,
     ...testCaseStatusMatch,
+    ...incrementalId,
   };
 }
 
@@ -95,14 +104,6 @@ function validationTagMatchGenerator(query: any, prefix: string = "") {
     ? { [prefix + "metaData.name"]: { $in: query.name } }
     : {};
 
-  // const validationTagExecutablePathMatch = query.executable_path.length
-  //   ? {
-  //       [prefix + "metaData.metaData.Executable Path"]: {
-  //         $in: query.executable_path,
-  //       },
-  //     }
-  //   : {};
-
   const validationTagStatusMatch = query.status.length
     ? { [prefix + "status"]: { $in: query.status } }
     : {};
@@ -110,7 +111,6 @@ function validationTagMatchGenerator(query: any, prefix: string = "") {
   return {
     ...validationTagIdMatch,
     ...validationTagNameMatch,
-    // ...validationTagExecutablePathMatch,
     ...validationTagStatusMatch,
   };
 }
@@ -138,9 +138,11 @@ function validationPointMatchGenerator(query: any, prefix: string = "") {
     : {};
 
   const validationPointPacketIdentifierMatch = query.packet_identifier.length
-    ? {
-        [prefix + "levels.packet_identifier"]: { $in: query.packet_identifier },
-      }
+    ? { [prefix + "levels.packet_identifier"]: { $in: query.packet_identifier },}
+    : {};
+  
+  const incrementalId = query.incrementalId.length
+    ? { [prefix + "incrementalId"]: { $in: query.incrementalId } }
     : {};
 
   return {
@@ -149,6 +151,7 @@ function validationPointMatchGenerator(query: any, prefix: string = "") {
     ...validationPointMacMatch,
     ...validationPointDirectionMatch,
     ...validationPointPacketIdentifierMatch,
+    ...incrementalId,
   };
 }
 
@@ -156,8 +159,9 @@ export async function testSuiteAggregationBuilder(req: express.Request) {
   // leh bn3ml look up l awl ?
   // 3shan el lookup by3ml join bs bybdl l attrbiute be list
   // fa lw unwind l awl, l lookup b3deha htgenerate list of list [ [] , [] , [] ]
+  const databaseName= req.query.databaseName;
   const results = await AggregationWrapper.getInstance(
-    getTestSuiteModel().aggregate()
+    getTestSuiteModel(databaseName).aggregate()
   )
     .match(testSuiteMatchGenerator(req.body.testSuites))
     .lookup("testcases", "testCaseRef", "_id")
@@ -203,8 +207,9 @@ export async function testSuiteAggregationBuilder(req: express.Request) {
 }
 
 export async function testCaseAggregationBuilder(req: express.Request) {
+  const databaseName= req.query.databaseName;
   const results = await AggregationWrapper.getInstance(
-    getTestCaseModel().aggregate()
+    getTestCaseModel(databaseName).aggregate()
   )
     .match(testCaseMatchGenerator(req.body.testCases))
     .lookup("validationtags", "validationTagRefs", "_id")
@@ -242,8 +247,9 @@ export async function testCaseAggregationBuilder(req: express.Request) {
   return results;
 }
 export async function validationTagAggregationBuilder(req: express.Request) {
+  const databaseName= req.query.databaseName;
   const results = await AggregationWrapper.getInstance(
-    getValidationTagModel().aggregate()
+    getValidationTagModel(databaseName).aggregate()
   )
     .match(validationTagMatchGenerator(req.body.validationTags))
     .lookup("validationpoints", "validationPointRefs", "_id")
@@ -280,9 +286,9 @@ export async function validationTagAggregationBuilder(req: express.Request) {
 }
 export async function validationPointAggregationBuilder(req: express.Request) {
   // we need to make it faster as much as possible
-
+  const databaseName= req.query.databaseName;
   const results = await AggregationWrapper.getInstance(
-    getValidationPointModel().aggregate()
+    getValidationPointModel(databaseName).aggregate()
   )
     .match(validationPointMatchGenerator(req.body.validationPoints))
     .lookup(
@@ -312,9 +318,10 @@ export async function validationPointAggregationBuilder(req: express.Request) {
   return results;
 }
 
-export async function filtersBuilder() {
+export async function filtersBuilder(databaseName: any) {
+  
   const test_suite_filters = await AggregationWrapper.getInstance(
-    getTestSuiteModel().aggregate()
+    getTestSuiteModel(databaseName).aggregate()
   )
     .group({
       _id: null,
@@ -332,7 +339,7 @@ export async function filtersBuilder() {
     .exec();
 
   const test_case_filters = await AggregationWrapper.getInstance(
-    getTestCaseModel().aggregate()
+    getTestCaseModel(databaseName).aggregate()
   )
     .group({
       _id: null,
@@ -343,12 +350,11 @@ export async function filtersBuilder() {
     .exec();
 
   const validation_tag_filters = await AggregationWrapper.getInstance(
-    getValidationTagModel().aggregate()
+    getValidationTagModel(databaseName).aggregate()
   )
     .group({
       _id: null,
       name: { $addToSet: "$metaData.name" },
-      executable_path: { $addToSet: "$metaData.metaData.Executable Path" },
       status: { $addToSet: "$status" },
     })
     .project()
@@ -356,7 +362,7 @@ export async function filtersBuilder() {
     .exec();
 
   const validation_point_filters = await AggregationWrapper.getInstance(
-    getValidationPointModel().aggregate()
+    getValidationPointModel(databaseName).aggregate()
   )
     .group({
       _id: null,
