@@ -10,8 +10,6 @@ import { AggregationWrapper } from '../services/AggregationWrapper'
 import { getValidationPointModel, ValidationPointBase } from '../model/ValidationPoint'
 import mongoose, { Types } from 'mongoose';
 
-// const ValidationPoint = require('../model/ValidationPoint').getValidationPointModel();
-
 
 export async function listingValidationPoint(req: express.Request, res: express.Response) {
     try {

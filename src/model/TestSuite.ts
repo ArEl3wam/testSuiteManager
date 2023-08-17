@@ -23,7 +23,11 @@ let testSuiteSchema = new Schema({
     },
     creation_date: {
         type: Schema.Types.Date
-    }
+    },
+    incremental_id: {
+        type: Schema.Types.Number
+    },
+    
     
 }, { toJSON: { virtuals: true }});
 

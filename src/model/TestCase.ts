@@ -30,6 +30,10 @@ let testCaseSchema = new Schema<TestCaseBase>({
     creation_date: {
         type: Schema.Types.Date
     },
+    incremental_id: {
+        type: Schema.Types.Number
+    },
+    
 }, { toJSON: { virtuals: true }});
 
 testCaseSchema.virtual('validationTags_count').get(function () {
@@ -57,4 +61,5 @@ interface TestCaseBase {
     validationTags_count?: number,
     end_date: Date,
     creation_date: Date
+    incremental_id: number
 }

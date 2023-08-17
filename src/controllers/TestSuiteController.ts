@@ -44,8 +44,10 @@ export async function addTestSuite(request: express.Request, response: express.R
     try {
         const TestSuiteModel = getTestSuiteModel();
         const testSuite = new TestSuiteModel(request.body);
+        const countDocuments: number = await TestSuiteModel.countDocuments();
+        testSuite.incremental_id = countDocuments + 1;
         const newTestSuite = await testSuite.save();
-        const transformedTestSuite =_idToid(newTestSuite.toJSON());
+        const transformedTestSuite = _idToid(newTestSuite.toJSON());
 
         return response.status(201).json(transformedTestSuite);
     } catch (err: any) {
