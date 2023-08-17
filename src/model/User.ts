@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import isSiemensEmail from "../validators/isSiemensEmail";
 import jwt from "jsonwebtoken";
+import { DbConnectionHandler } from "../shared/DbConnectionsHandler";
 
 export enum SolutionEnum {
   ETHERNET = "ETHERNET",
@@ -102,7 +103,9 @@ UserSchema.methods.changedPasswordAfter = function (timeStamp: Date) {
 };
 
 export function getUserModel() {
-  const conn = mongoose.connection.useDb("users", { useCache: true });
+  let conn = DbConnectionHandler.getInstance().getUsersDbConnection();
+  // const conn = mongoose.connection.useDb("users", { useCache: true });
+  conn = conn.useDb("users", { useCache: true });
   return conn.model<IUser>("User", UserSchema);
 }
 
