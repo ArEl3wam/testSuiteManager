@@ -13,7 +13,8 @@ import mongoose, { Types } from 'mongoose';
 
 export async function listingValidationPoint(req: express.Request, res: express.Response) {
     try {
-        const validationPoints = await AggregationWrapper.getInstance(getValidationPointModel().aggregate())
+        const databaseName= req.query.databaseName;
+        const validationPoints = await AggregationWrapper.getInstance(getValidationPointModel(databaseName).aggregate())
             .match({})
             .filter(req.query)
             .paginate(req.query.page, req.query.limit)
@@ -31,8 +32,9 @@ export async function listingValidationPoint(req: express.Request, res: express.
 }
 
 export async function addValidationPoint(req: express.Request, res: express.Response) {
+    const databaseName= req.query.databaseName;
     const { testSuiteId, testCaseId, validationTagId } = req.params;
-    const ValidationPoint: mongoose.Model<ValidationPointBase>  = getValidationPointModel();
+    const ValidationPoint: mongoose.Model<ValidationPointBase>  = getValidationPointModel(databaseName);
     const vp = new ValidationPoint();
 
     vp.parent = {
@@ -66,8 +68,8 @@ export async function addValidationPoint(req: express.Request, res: express.Resp
     }
     
     await vp.save().then(async () => {
-        await addValidationPointToValidationTag(validationTagId, { id: vp._id })
-        await updateParentsEndDate(vp);
+        await addValidationPointToValidationTag(validationTagId, { id: vp._id }, databaseName)
+        await updateParentsEndDate(vp, databaseName);
         return res.status(201).json(vp);
     }).catch((err: any) => {    
         return res.status(400).json({ message: err.message });
@@ -75,10 +77,10 @@ export async function addValidationPoint(req: express.Request, res: express.Resp
 }
 
 export async function  updatingValidationPoint(req: express.Request, res: express.Response) {
-    
+    const databaseName= req.query.databaseName;
     try {
         const { validationPointId } = req.params
-        const valdationPoint = await updateValdationPoint(validationPointId, req.body)
+        const valdationPoint = await updateValdationPoint(validationPointId, req.body, databaseName)
         res.status(200).send(valdationPoint)
     } catch (err: any) {
         res.status(500).send({

@@ -75,7 +75,7 @@ validationTagSchema.index({ "validationPointRefs": 1 })
 validationTagSchema.index({ "creation_date": 1 })
 validationTagSchema.index({ "end_date": 1 })
 
-export function getValidationTagModel(): mongoose.Model<ValidationTagBase>{
-    const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection();
+export function getValidationTagModel(databaseName: any): mongoose.Model<ValidationTagBase>{
+    const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection(databaseName);
     return connection.model<ValidationTagBase>('validationTag', validationTagSchema);
 }

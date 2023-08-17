@@ -6,9 +6,10 @@ import { AggregationWrapper } from "../services/AggregationWrapper";
 
 export async function getTestSuiteById(request: express.Request, response: express.Response) {
     const id = request.params.id;
+    const databaseName= request.query.databaseName;
     try {
         const filter= {"_id": id};
-        const testSuiteToSend: any = await getTestSuiteModel().findOne(filter);
+        const testSuiteToSend: any = await getTestSuiteModel(databaseName).findOne(filter);
         const transformedTestSuite =_idToid(testSuiteToSend.toJSON());
         return response.json(transformedTestSuite);
         
@@ -19,9 +20,10 @@ export async function getTestSuiteById(request: express.Request, response: expre
 
 export async function getAllTestSuites(request: express.Request, response: express.Response) {
     try {
+        const databaseName= request.query.databaseName;
         const page: number = parseInt(request.query.page as string, 10) || 1;
         const limit: number = parseInt(request.query.limit as string, 10) || 100;
-        let testSuites = await AggregationWrapper.getInstance(getTestSuiteModel().aggregate())
+        let testSuites = await AggregationWrapper.getInstance(getTestSuiteModel(databaseName).aggregate())
             .filter(request.query)
             .lookup("testcases", "testCaseRef", "_id")
             .count_project("TestCases", "testCaseRef")
@@ -42,7 +44,8 @@ export async function getAllTestSuites(request: express.Request, response: expre
 
 export async function addTestSuite(request: express.Request, response: express.Response) {
     try {
-        const TestSuiteModel = getTestSuiteModel();
+        const databaseName= request.query.databaseName;
+        const TestSuiteModel = getTestSuiteModel(databaseName);
         const testSuite = new TestSuiteModel(request.body);
         const countDocuments: number = await TestSuiteModel.countDocuments();
         testSuite.incremental_id = countDocuments + 1;
@@ -56,10 +59,11 @@ export async function addTestSuite(request: express.Request, response: express.R
 }
 
 export async function updateTestSuiteById(request: express.Request, response: express.Response) {
+    const databaseName= request.query.databaseName;
     const id = request.params.id;
     const filter= {"_id": id};
     const update = request.body;
-    getTestSuiteModel().updateOne(filter, {$set:update}).then(() => {
+    getTestSuiteModel(databaseName).updateOne(filter, {$set:update}).then(() => {
         return response.status(200).json({ message: "TestSuite updated" });
     }).catch((err: any) => {
         return response.status(400).json({ message: err.message });
@@ -68,9 +72,10 @@ export async function updateTestSuiteById(request: express.Request, response: ex
 export async function deleteTestSuiteById(request: express.Request, response: express.Response) {
     //TODO: delete all validation tags & test cases  associated with this test suite
     const id = request.params.id;
+    const databaseName= request.query.databaseName;
     try {
         const filter= {"_id": id};
-        await getTestSuiteModel().deleteOne(filter);
+        await getTestSuiteModel(databaseName).deleteOne(filter);
         return response.status(200).json({ message: "TestSuite deleted" });
     } catch (err: any) {
         return response.status(500).json({ message: err.message });

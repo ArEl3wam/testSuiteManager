@@ -44,8 +44,8 @@ testCaseSchema.virtual('validationTags_count').get(function () {
 testCaseSchema.index({ "parent.testSuite.id": 1 })
 testCaseSchema.index({ "status": 1 })
 
-export function getTestCaseModel() {
-    const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection();
+export function getTestCaseModel(databaseName: any) {
+    const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection(databaseName);
 
     return connection.model<TestCaseBase>('testCase',testCaseSchema);;
 }

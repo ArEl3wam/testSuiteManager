@@ -45,8 +45,8 @@ testSuiteSchema.index({ "metaData.tool_name": 1 })
 testSuiteSchema.index({ "status": 1 })
 
 
-export function getTestSuiteModel() {
-    const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection();
+export function getTestSuiteModel(databaseName: any) {
+    const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection(databaseName);
     return connection.model('testSuite', testSuiteSchema);
 }
 

@@ -156,8 +156,9 @@ export async function testSuiteAggregationBuilder(req: express.Request) {
   // leh bn3ml look up l awl ?
   // 3shan el lookup by3ml join bs bybdl l attrbiute be list
   // fa lw unwind l awl, l lookup b3deha htgenerate list of list [ [] , [] , [] ]
+  const databaseName= req.query.databaseName;
   const results = await AggregationWrapper.getInstance(
-    getTestSuiteModel().aggregate()
+    getTestSuiteModel(databaseName).aggregate()
   )
     .match(testSuiteMatchGenerator(req.body.testSuites))
     .lookup("testcases", "testCaseRef", "_id")
@@ -203,8 +204,9 @@ export async function testSuiteAggregationBuilder(req: express.Request) {
 }
 
 export async function testCaseAggregationBuilder(req: express.Request) {
+  const databaseName= req.query.databaseName;
   const results = await AggregationWrapper.getInstance(
-    getTestCaseModel().aggregate()
+    getTestCaseModel(databaseName).aggregate()
   )
     .match(testCaseMatchGenerator(req.body.testCases))
     .lookup("validationtags", "validationTagRefs", "_id")
@@ -242,8 +244,9 @@ export async function testCaseAggregationBuilder(req: express.Request) {
   return results;
 }
 export async function validationTagAggregationBuilder(req: express.Request) {
+  const databaseName= req.query.databaseName;
   const results = await AggregationWrapper.getInstance(
-    getValidationTagModel().aggregate()
+    getValidationTagModel(databaseName).aggregate()
   )
     .match(validationTagMatchGenerator(req.body.validationTags))
     .lookup("validationpoints", "validationPointRefs", "_id")
@@ -280,9 +283,9 @@ export async function validationTagAggregationBuilder(req: express.Request) {
 }
 export async function validationPointAggregationBuilder(req: express.Request) {
   // we need to make it faster as much as possible
-
+  const databaseName= req.query.databaseName;
   const results = await AggregationWrapper.getInstance(
-    getValidationPointModel().aggregate()
+    getValidationPointModel(databaseName).aggregate()
   )
     .match(validationPointMatchGenerator(req.body.validationPoints))
     .lookup(
@@ -312,9 +315,10 @@ export async function validationPointAggregationBuilder(req: express.Request) {
   return results;
 }
 
-export async function filtersBuilder() {
+export async function filtersBuilder(databaseName: any) {
+  
   const test_suite_filters = await AggregationWrapper.getInstance(
-    getTestSuiteModel().aggregate()
+    getTestSuiteModel(databaseName).aggregate()
   )
     .group({
       _id: null,
@@ -332,7 +336,7 @@ export async function filtersBuilder() {
     .exec();
 
   const test_case_filters = await AggregationWrapper.getInstance(
-    getTestCaseModel().aggregate()
+    getTestCaseModel(databaseName).aggregate()
   )
     .group({
       _id: null,
@@ -343,7 +347,7 @@ export async function filtersBuilder() {
     .exec();
 
   const validation_tag_filters = await AggregationWrapper.getInstance(
-    getValidationTagModel().aggregate()
+    getValidationTagModel(databaseName).aggregate()
   )
     .group({
       _id: null,
@@ -356,7 +360,7 @@ export async function filtersBuilder() {
     .exec();
 
   const validation_point_filters = await AggregationWrapper.getInstance(
-    getValidationPointModel().aggregate()
+    getValidationPointModel(databaseName).aggregate()
   )
     .group({
       _id: null,

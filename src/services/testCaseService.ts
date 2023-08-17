@@ -8,10 +8,10 @@ import { AggregationWrapper } from "./AggregationWrapper";
 import {getTestSuiteModel} from "../model/TestSuite";
 
 
-export async function getTestCaseById(testCaseId: string) {
+export async function getTestCaseById(testCaseId: string, databaseName: any) {
 
     try {
-        const testCase = await getTestCaseModel().findById(testCaseId, { validationTagRefs: false, __v: false }).exec()
+        const testCase = await getTestCaseModel(databaseName).findById(testCaseId, { validationTagRefs: false, __v: false }).exec()
         if(!testCase) {
             throw new NotFoundError(`Test Case with id '${testCaseId}' was not found!`)
         }
@@ -22,7 +22,7 @@ export async function getTestCaseById(testCaseId: string) {
 }
 
 
-export async function insertTestCase(testSuiteId: string, testCaseInfo: TestCaseInsertion) {
+export async function insertTestCase(testSuiteId: string, testCaseInfo: TestCaseInsertion, databaseName: any) {
     let testCaseId: Types.ObjectId | undefined = undefined;
 
     try {
@@ -33,23 +33,23 @@ export async function insertTestCase(testSuiteId: string, testCaseInfo: TestCase
                 }
             }
         })
-        const testCase = await getTestCaseModel().create(testCaseInfo)
+        const testCase = await getTestCaseModel(databaseName).create(testCaseInfo)
         testCaseId = testCase._id
-        await addTestCaseToTestSuite(testSuiteId, testCase)
+        await addTestCaseToTestSuite(testSuiteId, testCase, databaseName)
 
         return _idToid(testCase.toJSON())
     } catch (err: unknown) {
         console.log(err)
         if(err instanceof LinkingResourcesError) {
-            await getTestCaseModel().findByIdAndDelete(testCaseId)
+            await getTestCaseModel(databaseName).findByIdAndDelete(testCaseId)
         }
         throw err
     }
 }
 
-export async function addTestCaseToTestSuite(testSuiteId: string, testCase: { id?: Types.ObjectId, _id?: Types.ObjectId } ) {
+export async function addTestCaseToTestSuite(testSuiteId: string, testCase: { id?: Types.ObjectId, _id?: Types.ObjectId }, databaseName: any ) {
     try {
-        await getTestSuiteModel().findByIdAndUpdate(testSuiteId, {
+        await getTestSuiteModel(databaseName).findByIdAndUpdate(testSuiteId, {
             $push: {
                 testCaseRef: (testCase.id) ? testCase.id : testCase._id
             }
@@ -60,9 +60,9 @@ export async function addTestCaseToTestSuite(testSuiteId: string, testCase: { id
     }
 }
 
-export async function addValidationTagToTestCase(testCaseId: string, validationTag: { id?: Types.ObjectId, _id?: Types.ObjectId } ) {
+export async function addValidationTagToTestCase(testCaseId: string, validationTag: { id?: Types.ObjectId, _id?: Types.ObjectId }, databaseName: any ) {
     try {
-        await getTestCaseModel().findByIdAndUpdate(testCaseId, {
+        await getTestCaseModel(databaseName).findByIdAndUpdate(testCaseId, {
             $push: {
                 validationTagRefs: (validationTag.id) ? validationTag.id : validationTag._id
             }
@@ -73,7 +73,7 @@ export async function addValidationTagToTestCase(testCaseId: string, validationT
 }
 
 // TODO: add filteration options
-export async function listTestCases(listingOptions: TestCaseListingOptions) {
+export async function listTestCases(listingOptions: TestCaseListingOptions, databaseName: any) {
     try {
         const { skip, limit, testSuite, ...filtering } = listingOptions
         const options = filtering
@@ -85,7 +85,7 @@ export async function listTestCases(listingOptions: TestCaseListingOptions) {
             }
         })
 
-        const query = getTestCaseModel().find(options, { __v: false })
+        const query = getTestCaseModel(databaseName).find(options, { __v: false })
         if(skip) {
             query.sort({ _id: 1 }) 
             query.skip(skip)
@@ -100,9 +100,9 @@ export async function listTestCases(listingOptions: TestCaseListingOptions) {
 }
 
 
-export async function updateTestCase(testCaseId: string, updateData: TestCaseUpdate) {
+export async function updateTestCase(testCaseId: string, updateData: TestCaseUpdate, databaseName: any) {
     try {
-        const testCase = await getTestCaseModel().findByIdAndUpdate(testCaseId,flattenObject(updateData), { new: true,  fields: { __v: false }})
+        const testCase = await getTestCaseModel(databaseName).findByIdAndUpdate(testCaseId,flattenObject(updateData), { new: true,  fields: { __v: false }})
         if(!testCase) {
             throw new NotFoundError(`Test Case with id '${testCaseId}' was not found!`)
         }
@@ -115,11 +115,11 @@ export async function updateTestCase(testCaseId: string, updateData: TestCaseUpd
 
 export async function getAllTestcasesOfTestSuiteService(testSuiteId: string, req: express.Request) {
     try {
-        
-        const testSuiteData: any = await getTestSuiteModel().findById(testSuiteId, { '_v': 0 }).exec()
+        const databaseName= req.query.databaseName;
+        const testSuiteData: any = await getTestSuiteModel(databaseName).findById(testSuiteId, { '_v': 0 }).exec()
         const page = req.query.page ? parseInt(req.query.page as string) : 1
         const limit = req.query.limit ? parseInt(req.query.limit as string) : 100
-        let testcases = await AggregationWrapper.getInstance(getTestCaseModel().aggregate())
+        let testcases = await AggregationWrapper.getInstance(getTestCaseModel(databaseName).aggregate())
             .match({ '_id': { $in: testSuiteData.testCaseRef } })
             .lookup("validationtags", "validationTagRefs", "_id")
             .count_project("ValidationTags", "validationTagRefs")

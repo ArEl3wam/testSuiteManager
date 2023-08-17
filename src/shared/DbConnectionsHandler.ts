@@ -9,8 +9,8 @@ require('dotenv').config(
 export class DbConnectionHandler{
 
     private static instance: DbConnectionHandler;
-    private logsDbConnection: any;
-    private usersDbConnection: any;
+    private logsDbConnection: mongoose.Connection;
+    // private usersDbConnection: mongoose.Connection;
 
     private constructor() {
         const DB_URL: string = process.env['DB_URL'] || 'mongodb://127.0.0.1:';
@@ -44,8 +44,10 @@ export class DbConnectionHandler{
         return DbConnectionHandler.instance;
     }
 
-    public getLogsDbConnection(): mongoose.Connection {
-        
+    public getLogsDbConnection(databaseName?: string): mongoose.Connection {
+        if (typeof databaseName !== 'undefined') {
+            this.logsDbConnection = this.logsDbConnection.useDb(databaseName.toString());
+        }
         return this.logsDbConnection;
     }
 
@@ -55,6 +57,6 @@ export class DbConnectionHandler{
 
 
     public getUsersDbConnection() {
-        return this.usersDbConnection;
+        // return this.usersDbConnection;
     }
 }

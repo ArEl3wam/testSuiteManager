@@ -90,7 +90,7 @@ validationPointSchema.index({ "parent.testSuite.id": 1 })
 validationPointSchema.index({ "status": 1 })
 
 
-export function getValidationPointModel(): mongoose.Model<ValidationPointBase> {
-    const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection();
+export function getValidationPointModel(databaseName: any): mongoose.Model<ValidationPointBase> {
+    const connection: mongoose.Connection = DbConnectionHandler.getInstance().getLogsDbConnection(databaseName);
     return connection.model<ValidationPointBase>('validationPoint', validationPointSchema);
 }
