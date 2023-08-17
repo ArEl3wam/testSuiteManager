@@ -62,7 +62,13 @@ export const updateUserSolutions = catchAsync(
     if (solutions) user.solutions = solutions;
     await user.save();
 
-    return res.status(200).json(user);
+    return res
+      .status(200)
+      .json({
+        status: "success",
+        message: "User updated successfully",
+        data: user,
+      });
   }
 );
 
