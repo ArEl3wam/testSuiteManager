@@ -50,6 +50,10 @@ function testSuiteMatchGenerator(query: any, prefix: string = "") {
     ? { [prefix + "status"]: { $in: query.status } }
     : {};
 
+  const incrementalId = query.incrementalId.length
+    ? { [prefix + "incrementalId"]: { $in: query.incrementalId } }
+    : {};
+
   return {
     ...testSuiteIdMatch,
     ...ownerMatch,
@@ -60,6 +64,7 @@ function testSuiteMatchGenerator(query: any, prefix: string = "") {
     ...solutionMatch,
     ...toolNameMatch,
     ...statusMatch,
+    ...incrementalId,
   };
 }
 
@@ -75,9 +80,13 @@ function testCaseMatchGenerator(query: any, prefix: string = "") {
   const testCaseStatusMatch = query.status.length
     ? { [prefix + "status"]: { $in: query.status } }
     : {};
+  const incrementalId = query.incrementalId.length
+    ? { [prefix + "incrementalId"]: { $in: query.incrementalId } }
+    : {};
   return {
     ...testCaseIdMatch,
     ...testCaseStatusMatch,
+    ...incrementalId,
   };
 }
 
@@ -95,14 +104,6 @@ function validationTagMatchGenerator(query: any, prefix: string = "") {
     ? { [prefix + "metaData.name"]: { $in: query.name } }
     : {};
 
-  // const validationTagExecutablePathMatch = query.executable_path.length
-  //   ? {
-  //       [prefix + "metaData.metaData.Executable Path"]: {
-  //         $in: query.executable_path,
-  //       },
-  //     }
-  //   : {};
-
   const validationTagStatusMatch = query.status.length
     ? { [prefix + "status"]: { $in: query.status } }
     : {};
@@ -110,7 +111,6 @@ function validationTagMatchGenerator(query: any, prefix: string = "") {
   return {
     ...validationTagIdMatch,
     ...validationTagNameMatch,
-    // ...validationTagExecutablePathMatch,
     ...validationTagStatusMatch,
   };
 }
@@ -138,9 +138,11 @@ function validationPointMatchGenerator(query: any, prefix: string = "") {
     : {};
 
   const validationPointPacketIdentifierMatch = query.packet_identifier.length
-    ? {
-        [prefix + "levels.packet_identifier"]: { $in: query.packet_identifier },
-      }
+    ? { [prefix + "levels.packet_identifier"]: { $in: query.packet_identifier },}
+    : {};
+  
+  const incrementalId = query.incrementalId.length
+    ? { [prefix + "incrementalId"]: { $in: query.incrementalId } }
     : {};
 
   return {
@@ -149,6 +151,7 @@ function validationPointMatchGenerator(query: any, prefix: string = "") {
     ...validationPointMacMatch,
     ...validationPointDirectionMatch,
     ...validationPointPacketIdentifierMatch,
+    ...incrementalId,
   };
 }
 
@@ -352,7 +355,6 @@ export async function filtersBuilder(databaseName: any) {
     .group({
       _id: null,
       name: { $addToSet: "$metaData.name" },
-      executable_path: { $addToSet: "$metaData.metaData.Executable Path" },
       status: { $addToSet: "$status" },
     })
     .project()
