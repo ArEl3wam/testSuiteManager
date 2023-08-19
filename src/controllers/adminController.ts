@@ -6,14 +6,17 @@ import { SolutionEnum } from "../model/User";
 
 export const getAllUsers = catchAsync(
   async (req: express.Request, res: express.Response) => {
-    const activated = req.query.activated;
+    const queryBody = {
+      isActive: req.query.activated,
+      isAdmin: false,
+      isVerified: true
+    }
     const User = getUserModel();
-    if (activated) {
-      const users = await User.find({ isActive: true }).exec();
+    try{
+      const users = await User.find(queryBody).exec();
       res.status(200).json(users);
-    } else {
-      const users = await User.find({ isActive: false }).exec();
-      res.status(200).json(users);
+    }catch(err:any){
+      res.status(400).json({ message: err.message });
     }
   }
 );
