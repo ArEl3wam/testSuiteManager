@@ -342,6 +342,7 @@ export async function filtersBuilder(databaseName: any) {
       incrementalId: { $addToSet: "$incrementalId" },
     })
     .project()
+    .sort({"incrementalId": 1})
     .getAggregation()
     .exec();
 
@@ -354,6 +355,7 @@ export async function filtersBuilder(databaseName: any) {
       incrementalId: { $addToSet: "$incrementalId" },
     })
     .project()
+    .sort({"incrementalId": 1})
     .getAggregation()
     .exec();
 
@@ -381,6 +383,7 @@ export async function filtersBuilder(databaseName: any) {
       incremetalId: { $addToSet: "$incrementalId" },
     })
     .project()
+    .sort({"incrementalId": 1})
     .getAggregation()
     .exec();
 
