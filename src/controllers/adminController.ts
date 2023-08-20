@@ -9,13 +9,13 @@ export const getAllUsers = catchAsync(
     const queryBody = {
       isActive: req.query.activated,
       isAdmin: false,
-      isVerified: true
-    }
+      isVerified: true,
+    };
     const User = getUserModel();
-    try{
+    try {
       const users = await User.find(queryBody).exec();
       res.status(200).json(users);
-    }catch(err:any){
+    } catch (err: any) {
       res.status(400).json({ message: err.message });
     }
   }
@@ -32,24 +32,30 @@ export const activateUser = catchAsync(
       if (approve) {
         user.isActive = true;
         await user.save();
-        return res.status(200).json(user);
+        return res.status(200).json({
+          status: "success",
+          message: "User is Activated.",
+          data: user,
+        });
       } else {
         await user.deleteOne();
-        return res.status(200).json({ message: "User is deleted." });
+        return res
+          .status(200)
+          .json({ status: "success", message: "User is deleted." });
       }
     } catch (err: any) {
-      return res.status(400).json({ message: err.message });
+      return res.status(400).json({ status: "fail", message: err.message });
     }
   }
 );
 
-export const updateUserSolutions = catchAsync(
+export const updateUser = catchAsync(
   async (req: any, res: express.Response, next: express.NextFunction) => {
     const User = getUserModel();
     const userId = req.params.id;
     const user = await User.findById(userId);
     if (!user) return next(new AppError("This user does not exist.", 401));
-    let { solutions } = req.body;
+    let { solutions, deletableDatabases } = req.body;
 
     solutions = solutions.map((solution: string) => solution.toUpperCase());
     const containsInvalidSolution = solutions.some(
@@ -63,15 +69,16 @@ export const updateUserSolutions = catchAsync(
       return next(new AppError("Invalid solution type.", 401));
 
     if (solutions) user.solutions = solutions;
+    if (deletableDatabases) user.deletableDatabases = deletableDatabases;
+    console.log(user);
+
     await user.save();
 
-    return res
-      .status(200)
-      .json({
-        status: "success",
-        message: "User updated successfully",
-        data: user,
-      });
+    return res.status(200).json({
+      status: "success",
+      message: "User updated successfully",
+      data: user,
+    });
   }
 );
 

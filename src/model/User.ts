@@ -19,6 +19,7 @@ export interface IUser {
   isActive: boolean;
   isVerified: boolean;
   solutions: string[];
+  deletableDatabases: string[];
 
   changedPasswordAfter: (timeStamp: Date) => boolean;
   getToken: (extra_payload?: object, token_options?: object) => string;
@@ -35,7 +36,7 @@ const UserSchema = new mongoose.Schema<IUser>({
     required: [true, "A User must have an email."],
     unique: true,
     lowercase: true,
-    // validate: isSiemensEmail,
+    validate: isSiemensEmail,
   },
 
   password: {
@@ -65,6 +66,11 @@ const UserSchema = new mongoose.Schema<IUser>({
   solutions: {
     type: [String],
     enum: Object.values(SolutionEnum),
+    default: [],
+  },
+
+  deletableDatabases: {
+    type: [String],
     default: [],
   },
 });

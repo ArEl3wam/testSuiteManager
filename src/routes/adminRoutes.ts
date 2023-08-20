@@ -3,7 +3,7 @@ import { isAdmin } from "../permissions/permissions";
 import {
   getAllUsers,
   activateUser,
-  updateUserSolutions,
+  updateUser,
   deleteUser,
   getAllSolutions,
 } from "../controllers/adminController";
@@ -16,7 +16,7 @@ adminRouter.route("/users").get(getAllUsers);
 adminRouter
   .route("/users/:id")
   .get(activateUser)
-  .patch(updateUserSolutions)
+  .patch(updateUser)
   .delete(deleteUser);
 
 adminRouter.route("/solutions").get(getAllSolutions);
