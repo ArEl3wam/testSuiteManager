@@ -380,7 +380,7 @@ export async function filtersBuilder(databaseName: any) {
       mac: { $addToSet: "$levels.mac" },
       direction: { $addToSet: "$levels.direction" },
       packet_identifier: { $addToSet: "$levels.packet_identifier" },
-      incremetalId: { $addToSet: "$incrementalId" },
+      incrementalId: { $addToSet: "$incrementalId" },
     })
     .project()
     .sort({"incrementalId": 1})
