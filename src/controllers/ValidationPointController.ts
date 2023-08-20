@@ -1,7 +1,6 @@
 import express from 'express'
 import {
     addValidationPointToValidationTag,
-    parseValidationPointResults,
     updateParentsEndDate,
     updateValdationPoint,
     getAllValidationPointsOfvalidationTagService

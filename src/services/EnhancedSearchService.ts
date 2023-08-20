@@ -194,6 +194,7 @@ export async function testSuiteAggregationBuilder(req: express.Request) {
       testCaseRef: { $addToSet: "$testCaseRef._id" },
       creation_date: { $first: "$creation_date" },
       end_date: { $first: "$end_date" },
+      incrementalId: { $first: "$incrementalId" },
     })
     .lookup("testcases", "testCaseRef", "_id")
     .count_project("TestCases", "testCaseRef")
@@ -233,6 +234,8 @@ export async function testCaseAggregationBuilder(req: express.Request) {
       validationTagRefs: { $addToSet: "$validationTagRefs._id" },
       creation_date: { $first: "$creation_date" },
       end_date: { $first: "$end_date" },
+      incrementalId: { $first: "$incrementalId" },
+
     })
     .lookup("testsuites", "parent.testSuite.id", "_id", "parent.testSuite")
     .match(testSuiteMatchGenerator(req.body.testSuites, "parent.testSuite"))
