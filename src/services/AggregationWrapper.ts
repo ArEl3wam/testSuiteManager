@@ -49,6 +49,7 @@ export class AggregationWrapper{
             status: 1,
             creation_date: 1,
             end_date: 1,
+            incrementalId: 1,
             
         })
         return this;
