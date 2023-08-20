@@ -91,7 +91,6 @@ export class AggregationWrapper{
         if (!sort) {
             return this;
         }
-        sort = sort.split(",").join(" ");
         this.aggregation.sort(sort)
         return this;
     }

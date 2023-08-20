@@ -201,6 +201,7 @@ export async function testSuiteAggregationBuilder(req: express.Request) {
     .filter(req.query)
     .paginate(req.query.page, req.query.limit)
     .addFields({ "metaData.id": "$_id" })
+    .sort({"incrementalId": 1})
     .getAggregation()
     .exec();
 
@@ -244,6 +245,7 @@ export async function testCaseAggregationBuilder(req: express.Request) {
     .filter(req.query)
     .paginate(req.query.page, req.query.limit)
     .unwind("parent.testSuite")
+    .sort({"incrementalId": 1})
     .getAggregation()
     .exec();
 
@@ -315,6 +317,7 @@ export async function validationPointAggregationBuilder(req: express.Request) {
     .unwind("parent.testSuite")
     .filter(req.query)
     .paginate(req.query.page, req.query.limit)
+    .sort({"incrementalId": 1})
     .getAggregation()
     .exec();
 
