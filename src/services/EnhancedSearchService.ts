@@ -339,6 +339,7 @@ export async function filtersBuilder(databaseName: any) {
       solution: { $addToSet: "$metaData.solution" },
       tool_name: { $addToSet: "$metaData.tool_name" },
       status: { $addToSet: "$status" },
+      incrementalId: { $addToSet: "$incrementalId" },
     })
     .project()
     .getAggregation()
@@ -350,6 +351,7 @@ export async function filtersBuilder(databaseName: any) {
     .group({
       _id: null,
       status: { $addToSet: "$status" },
+      incrementalId: { $addToSet: "$incrementalId" },
     })
     .project()
     .getAggregation()
@@ -376,6 +378,7 @@ export async function filtersBuilder(databaseName: any) {
       mac: { $addToSet: "$levels.mac" },
       direction: { $addToSet: "$levels.direction" },
       packet_identifier: { $addToSet: "$levels.packet_identifier" },
+      incremetalId: { $addToSet: "$incrementalId" },
     })
     .project()
     .getAggregation()
