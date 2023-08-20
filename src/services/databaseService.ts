@@ -9,7 +9,7 @@ export async function getDatabasesNames() {
     const databases = await connection.db.admin().listDatabases();
     return databases.databases
         .map((database: any) => database.name)
-        .filter((databaseName: string) => !['admin', 'local', 'config', 'test']
+        .filter((databaseName: string) => !['admin', 'local', 'config', 'test', 'users']
         .includes(databaseName));
 }
 
