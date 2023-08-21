@@ -60,8 +60,9 @@ export async function addTestSuite(
     const databaseName = request.query.databaseName;
     const TestSuiteModel = getTestSuiteModel(databaseName);
     const testSuite = new TestSuiteModel(request.body);
-    const countDocuments: number = await TestSuiteModel.countDocuments();
-    testSuite.incrementalId = countDocuments + 1;
+    const HighestIncrementalIdObj = await TestSuiteModel.find().sort({ incrementalId: -1 }).limit(1);
+    const incrementalID: number = HighestIncrementalIdObj[0]?.incrementalId !== undefined ? HighestIncrementalIdObj[0].incrementalId + 1 : 1;
+    testSuite.incrementalId = incrementalID;
     const newTestSuite = await testSuite.save();
     const transformedTestSuite = _idToid(newTestSuite.toJSON());
 
