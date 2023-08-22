@@ -75,6 +75,7 @@ export class AggregationWrapper{
                 $sum: { $cond: [{ $eq: ["$" + refName + ".status", false] }, 1, 0] },
             },
         })
+        this.sort({incrementalId: 1, _id: 1})
         return this;
     }
 
