@@ -384,7 +384,7 @@ export async function getAllValidationTagsOfTestCaseService(testCaseId: string, 
         let validationTags = await AggregationWrapper.getInstance(getValidationTagModel(databaseName).aggregate())
             .match({ '_id': { $in: testCaseData.validationTagRefs } })
             .lookup("validationpoints", "validationPointRefs", "_id")
-            .count_by_project("ValidationPoints", "validationPointRefs")
+            .count_by_group("ValidationPoints", "validationPointRefs")
             .filter(req.query)
             .paginate(page, limit)
             .getAggregation().exec();
