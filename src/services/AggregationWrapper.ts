@@ -35,7 +35,7 @@ export class AggregationWrapper{
             }
         }
     }
-    count_project(fieldName: string, refName: string) {
+    count_by_project(fieldName: string, refName: string) {
         let count_name: string = fieldName + "Count"
         let passed_count_name: string = "passed" + count_name
         let failed_count_name: string = "failed" + count_name
@@ -54,6 +54,30 @@ export class AggregationWrapper{
         })
         return this;
     }
+    count_by_group(fieldName: string, refName: string) {
+        this.unwind(refName)
+        let count_name: string = fieldName + "Count"
+        let passed_count_name: string = "passed" + count_name
+        let failed_count_name: string = "failed" + count_name
+        this.aggregation.group({
+            _id: "$_id",
+            parent: { $first: "$parent" },
+            metaData: { $first: "$metaData" },
+            status: { $first: "$status" },
+            creation_date: { $first: "$creation_date" },
+            end_date: { $first: "$end_date" },
+            incrementalId: { $first: "$incrementalId" },
+            [count_name]: { $sum: 1 },
+            [passed_count_name]: {
+                $sum: { $cond: [{ $eq: ["$" + refName + ".status", true] }, 1, 0] },
+            },
+            [failed_count_name]: {
+                $sum: { $cond: [{ $eq: ["$" + refName + ".status", false] }, 1, 0] },
+            },
+        })
+        return this;
+    }
+
     filter(query: any) {
         let temp_query = JSON.parse(JSON.stringify(query));
         const exculudeFields = ["page", "limit", "sort", "databaseName"];

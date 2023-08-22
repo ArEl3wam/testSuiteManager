@@ -122,7 +122,7 @@ export async function getAllTestcasesOfTestSuiteService(testSuiteId: string, req
         let testcases = await AggregationWrapper.getInstance(getTestCaseModel(databaseName).aggregate())
             .match({ '_id': { $in: testSuiteData.testCaseRef } })
             .lookup("validationtags", "validationTagRefs", "_id")
-            .count_project("ValidationTags", "validationTagRefs")
+            .count_by_project("ValidationTags", "validationTagRefs")
             .filter(req.query)
             .paginate(page, limit)
             .getAggregation().exec()

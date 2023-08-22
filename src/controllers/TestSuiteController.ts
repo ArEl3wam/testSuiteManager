@@ -37,7 +37,8 @@ export async function getAllTestSuites(
     )
       .filter(request.query)
       .lookup("testcases", "testCaseRef", "_id")
-      .count_project("TestCases", "testCaseRef")
+      .count_by_group("TestCases", "testCaseRef")
+      // .count_by_project("TestCases", "testCaseRef")
       .paginate(page, limit)
       .getAggregation()
       .exec();
