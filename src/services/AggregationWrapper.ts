@@ -95,7 +95,10 @@ export class AggregationWrapper{
         return this;
     }
     unwind(localFieldName: string) {
-        this.aggregation.unwind(localFieldName)
+        this.aggregation.unwind({
+            path: "$" + localFieldName,
+            preserveNullAndEmptyArrays: true
+        })
         return this;
     }
     project(query: any = {_id : 0}) {
