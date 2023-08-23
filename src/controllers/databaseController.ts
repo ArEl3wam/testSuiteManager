@@ -88,21 +88,29 @@ export async function AuthorizeDatabaseCreation(request: express.Request, respon
 
 export async function getDatabasesBySolution(request: express.Request, response: express.Response) {
     const DBModel = getDBMetadataModel()
-    const result = await DBModel.aggregate().group({
-        _id: "$SolutionName",
-        Databases:{$push: "$DatabaseName"}
-    }).project({
-        _id: 0,
-        SolutionName: "$_id",
-        Databases: 1
-    }).exec()
-    const formattedResult: any = {};
-    result.forEach((solution) => {
-        formattedResult[solution.SolutionName] = solution.Databases;
-    });
-    return response.status(200).json({
-        status: "success",
-        result: formattedResult
-    })
+    try {
+        const result = await DBModel.aggregate().group({
+            _id: "$SolutionName",
+            Databases: { $push: "$DatabaseName" }
+        }).project({
+            _id: 0,
+            SolutionName: "$_id",
+            Databases: 1
+        }).exec()
+        const formattedResult: any = {};
+        result.forEach((solution) => {
+            formattedResult[solution.SolutionName] = solution.Databases;
+        });
+        return response.status(200).json({
+            status: "success",
+            result: formattedResult
+        })
+    }
+    catch (err: any) {
+        return response.status(400).json({
+            status: 'fail',
+            message: err.message
+        });
+    }
     
 }
