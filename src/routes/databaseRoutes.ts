@@ -9,7 +9,7 @@ import { isAuthenticated } from "../permissions/permissions";
 
 
 export const databaseRouter = express.Router();
-databaseRouter.use('/database',isAuthenticated);
+// databaseRouter.use('/database',isAuthenticated);
 
 databaseRouter
   .route("/database/urls")
