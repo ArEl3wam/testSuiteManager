@@ -12,7 +12,6 @@ import { databaseRouter } from "./routes/databaseRoutes";
 import { SearchRouter } from "./routes/searchRoutes";
 import { shutdownRouter } from "./routes/shutdownRouter";
 import { statisticsRouter } from "./routes/statisticsRoutes";
-import { AuthorizeDatabaseConnection } from "./controllers/databaseController";
 import { authRouter } from "./routes/authRoutes";
 import { adminRouter } from "./routes/adminRoutes";
 import { authMiddleware } from "./controllers/authController";
@@ -47,7 +46,6 @@ export function createApp() {
 
   app.use(cookieParser());
   app.use(authMiddleware); // this must be before swapDatabaseConnection
-  app.use(AuthorizeDatabaseConnection);
   app.use(bodyParser.json());
   app.use(databaseRouter);
   app.use(TestSuiteRouter);

@@ -1,6 +1,11 @@
 import express from 'express';
 import { DbConnectionHandler } from "./../shared/DbConnectionsHandler"
-import { getDatabasesNames, checkDuplicateDatabaseName } from "./../services/databaseService"
+import {
+    getDatabasesNames,
+    checkDuplicateDatabaseName,
+    addToDbMetadata,
+} from "./../services/databaseService"
+import {getDBMetadataModel} from "./../model/DBMetadata"
 
 let connection = DbConnectionHandler.getInstance().getLogsDbConnection();
 
@@ -10,7 +15,7 @@ function connectToAdmin() {
 
 }
 
-export async function getDatabaseUrls(request: express.Request, response: express.Response) {
+export async function getDatabaseUrls(request: express.Request | any, response: express.Response) {
     
     return response.status(200).json({ databasesNames: await getDatabasesNames()});
 }
@@ -58,9 +63,46 @@ export async function deleteDatabase(request: express.Request, response: express
     }
 }
 
-export async function AuthorizeDatabaseConnection(request: express.Request, response: express.Response, next: express.NextFunction) {
+export async function AuthorizeDatabaseCreation(request: express.Request, response: express.Response, next: express.NextFunction) {
+    // this function make sure that the requested database is created and added to DB metadata database
     
-    await checkDuplicateDatabaseName(request)
-    // TODO: authorize the user to access the database
+    if (!request.query.databaseName) {
+        response.status(400).json({
+            status: 'fail',
+            message: 'invalid database name'
+        });
+    }
+    if (!request.query.solution) {
+        response.status(400).json({
+            status: 'fail',
+            message: 'invalid solution name'
+        });
+    }
+    const new_db: boolean = !await checkDuplicateDatabaseName(request); 
+    if (new_db){
+        addToDbMetadata(request, response);
+    }
+    
     return next();
+}
+
+export async function getDatabasesBySolution(request: express.Request, response: express.Response) {
+    const DBModel = getDBMetadataModel()
+    const result = await DBModel.aggregate().group({
+        _id: "$SolutionName",
+        Databases:{$push: "$DatabaseName"}
+    }).project({
+        _id: 0,
+        SolutionName: "$_id",
+        Databases: 1
+    }).exec()
+    const formattedResult: any = {};
+    result.forEach((solution) => {
+        formattedResult[solution.SolutionName] = solution.Databases;
+    });
+    return response.status(200).json({
+        status: "success",
+        result: formattedResult
+    })
+    
 }

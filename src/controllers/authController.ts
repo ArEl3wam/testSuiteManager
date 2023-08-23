@@ -127,7 +127,6 @@ export const verify = catchAsync(
     );
     if (!user) return next(new AppError("This user doesn't exist", 404));
 
-    console.log();
     res
       .status(301)
       .redirect(
