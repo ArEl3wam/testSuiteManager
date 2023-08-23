@@ -49,6 +49,7 @@ export async function deleteDatabase(request: express.Request, response: express
     try {
         connection = connection.useDb(db_name.toString());
         connection.db.dropDatabase();
+        getDBMetadataModel().deleteOne({DatabaseName: db_name.toString()}).exec();
         connectToAdmin();
         return response.status(200).json({
             status: 'success',
