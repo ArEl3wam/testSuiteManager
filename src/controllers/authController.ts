@@ -88,7 +88,7 @@ export const authMiddleware = catchAsync(
 
     const User = getUserModel();
     const user = await User.findById(payload.id);
-    console.log(payload.id);
+    // console.log(payload.id);
 
     if (!user) return next(new AppError("This user does not exist.", 401));
 
