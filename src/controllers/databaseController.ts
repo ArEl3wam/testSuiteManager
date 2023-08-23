@@ -72,12 +72,17 @@ export async function AuthorizeDatabaseCreation(request: express.Request, respon
             message: 'invalid database name'
         });
     }
-    if (!request.query.solution) {
-        response.status(400).json({
-            status: 'fail',
-            message: 'invalid solution name'
-        });
+
+    if (!request.query.solutionName) {
+        request.query.solutionName = 'ETHERNET';
     }
+
+    // if (!request.query.solution) {
+    //     response.status(400).json({
+    //         status: 'fail',
+    //         message: 'invalid solution name'
+    //     });
+    // }
     const new_db: boolean = !await checkDuplicateDatabaseName(request); 
     if (new_db){
         addToDbMetadata(request, response);
