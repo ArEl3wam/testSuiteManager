@@ -3,13 +3,12 @@ import {
   getDatabaseUrls,
   openDatabaseConnection,
   deleteDatabase,
-  getDatabasesBySolution
+  getDatabasesBySolution,
 } from "../controllers/databaseController";
 import { isAuthenticated } from "../permissions/permissions";
 
-
 export const databaseRouter = express.Router();
-// databaseRouter.use('/database',isAuthenticated);
+databaseRouter.use("/database", isAuthenticated);
 
 databaseRouter
   .route("/database/urls")
@@ -17,6 +16,4 @@ databaseRouter
   .post(openDatabaseConnection)
   .delete(deleteDatabase);
 
-databaseRouter
-  .route("/database/dummy_route")
-  .get(getDatabasesBySolution)
+databaseRouter.route("/database/dummy_route").get(getDatabasesBySolution);
