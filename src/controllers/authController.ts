@@ -6,8 +6,15 @@ import { AppError } from "../shared/errors";
 import sendEmail from "../shared/email";
 
 export const signup = catchAsync(
-  async (req: express.Request, res: express.Response) => {
+  async (
+    req: express.Request,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
     const User = getUserModel();
+    const user = await User.findOne({ email: req.body.email });
+    if (user) return next(new AppError("This email is already taken.", 400));
+
     const newUser = await User.create({
       name: req.body.name,
       email: req.body.email,
