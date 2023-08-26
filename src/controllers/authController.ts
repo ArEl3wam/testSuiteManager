@@ -40,7 +40,7 @@ export const signup = catchAsync(
     );
 
     const baseUrl = `${req.protocol}://${req.hostname}:${process.env.PORT}`;
-    const text = `click here to activate: ${baseUrl}/verify/${verificationToken}`;
+    const text = `Click here to verify your account: ${baseUrl}/verify/${verificationToken}`;
 
     return await sendEmail({
       to: newUser.email,
