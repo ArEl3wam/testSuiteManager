@@ -16,4 +16,4 @@ databaseRouter
   .post(openDatabaseConnection)
   .delete(deleteDatabase);
 
-databaseRouter.route("/database/dummy_route").get(getDatabasesBySolution);
+databaseRouter.route("/database/solutions").get(getDatabasesBySolution);

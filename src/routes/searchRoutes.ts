@@ -1,7 +1,13 @@
 import { Router } from "express";
-import { getUniqueFilters,searchByFilters } from "../controllers/SearchController";
+import {
+  getUniqueFilters,
+  searchByFilters,
+} from "../controllers/SearchController";
+import { isAuthenticated } from "../permissions/permissions";
 
-export const SearchRouter = Router()
+export const SearchRouter = Router();
 
-SearchRouter.get('/search', getUniqueFilters)
-SearchRouter.post('/search', searchByFilters)
+SearchRouter.use("/search", isAuthenticated);
+
+SearchRouter.get("/search", getUniqueFilters);
+SearchRouter.post("/search", searchByFilters);

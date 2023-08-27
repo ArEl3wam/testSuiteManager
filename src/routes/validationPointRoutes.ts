@@ -1,22 +1,28 @@
 import { Router } from "express";
-import {getAllValidationPointsOfvalidationTag, listingValidationPoint , addValidationPoint, updatingValidationPoint} from "../controllers/ValidationPointController";
+import {
+  getAllValidationPointsOfvalidationTag,
+  listingValidationPoint,
+  addValidationPoint,
+  updatingValidationPoint,
+} from "../controllers/ValidationPointController";
+import { isAuthenticated } from "../permissions/permissions";
 
-export const valdationPointRouter = Router()
+export const valdationPointRouter = Router();
 
-valdationPointRouter
-    .route('/validationPoints')
-    .get(listingValidationPoint)
+valdationPointRouter.use("/validationPoints", isAuthenticated);
 
-valdationPointRouter
-    .route('/validationPoints/:validationPointId')
-    .patch(updatingValidationPoint)
-
-
-valdationPointRouter
-    .route('/validationPoints/validationtag/:validationTagId')
-    .get(getAllValidationPointsOfvalidationTag)
-
+valdationPointRouter.route("/validationPoints").get(listingValidationPoint);
 
 valdationPointRouter
-    .route('/TestSuite/:testSuiteId/TestCase/:testCaseId/ValidationTag/:validationTagId/ValidationPoint')
-    .post(addValidationPoint);
+  .route("/validationPoints/:validationPointId")
+  .patch(updatingValidationPoint);
+
+valdationPointRouter
+  .route("/validationPoints/validationtag/:validationTagId")
+  .get(getAllValidationPointsOfvalidationTag);
+
+valdationPointRouter
+  .route(
+    "/TestSuite/:testSuiteId/TestCase/:testCaseId/ValidationTag/:validationTagId/ValidationPoint"
+  )
+  .post(addValidationPoint);
