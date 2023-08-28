@@ -161,7 +161,7 @@ export async function testSuiteAggregationBuilder(req: express.Request) {
   // fa lw unwind l awl, l lookup b3deha htgenerate list of list [ [] , [] , [] ]
   const databaseName= req.query.databaseName;
   const results = await AggregationWrapper.getInstance(
-    getTestSuiteModel(databaseName).aggregate()
+    getTestSuiteModel(databaseName).aggregate([], { allowDiskUse: true })
   )
     .match(testSuiteMatchGenerator(req.body.testSuites))
     .lookup("testcases", "testCaseRef", "_id")
@@ -211,7 +211,7 @@ export async function testSuiteAggregationBuilder(req: express.Request) {
 export async function testCaseAggregationBuilder(req: express.Request) {
   const databaseName= req.query.databaseName;
   const results = await AggregationWrapper.getInstance(
-    getTestCaseModel(databaseName).aggregate()
+    getTestCaseModel(databaseName).aggregate([], { allowDiskUse: true })
   )
     .match(testCaseMatchGenerator(req.body.testCases))
     .lookup("validationtags", "validationTagRefs", "_id")
@@ -254,7 +254,7 @@ export async function testCaseAggregationBuilder(req: express.Request) {
 export async function validationTagAggregationBuilder(req: express.Request) {
   const databaseName= req.query.databaseName;
   const results = await AggregationWrapper.getInstance(
-    getValidationTagModel(databaseName).aggregate()
+    getValidationTagModel(databaseName).aggregate([], { allowDiskUse: true })
   )
     .match(validationTagMatchGenerator(req.body.validationTags))
     .lookup("validationpoints", "validationPointRefs", "_id")
@@ -293,7 +293,7 @@ export async function validationPointAggregationBuilder(req: express.Request) {
   // we need to make it faster as much as possible
   const databaseName= req.query.databaseName;
   const results = await AggregationWrapper.getInstance(
-    getValidationPointModel(databaseName).aggregate()
+    getValidationPointModel(databaseName).aggregate([], { allowDiskUse: true })
   )
     .match(validationPointMatchGenerator(req.body.validationPoints))
     .lookup(
