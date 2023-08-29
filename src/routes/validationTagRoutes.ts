@@ -13,7 +13,7 @@ import { isAuthenticated } from "../permissions/permissions";
 
 export const validationTagRouter = express.Router();
 
-validationTagRouter.use("/validationTags", isAuthenticated);
+// validationTagRouter.use("/validationTags", isAuthenticated);
 
 validationTagRouter.route("/validationTags").get(fetchValidationTags);
 

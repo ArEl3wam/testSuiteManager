@@ -10,7 +10,7 @@ import { isAuthenticated } from "../permissions/permissions";
 
 export const testCaseRouter = express.Router();
 
-testCaseRouter.use("/testCases", isAuthenticated);
+// testCaseRouter.use("/testCases", isAuthenticated);
 
 testCaseRouter.route("/testCases").get(listingTestCases);
 

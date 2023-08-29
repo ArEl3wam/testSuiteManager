@@ -9,7 +9,7 @@ import { isAuthenticated } from "../permissions/permissions";
 
 export const valdationPointRouter = Router();
 
-valdationPointRouter.use("/validationPoints", isAuthenticated);
+// valdationPointRouter.use("/validationPoints", isAuthenticated);
 
 valdationPointRouter.route("/validationPoints").get(listingValidationPoint);
 

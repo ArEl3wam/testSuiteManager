@@ -11,7 +11,7 @@ import { isAuthenticated } from "../permissions/permissions";
 
 export const TestSuiteRouter = express.Router();
 
-TestSuiteRouter.use("/TestSuites", isAuthenticated);
+// TestSuiteRouter.use("/TestSuites", isAuthenticated);
 
 TestSuiteRouter.route("/TestSuites/:id")
   .get(getTestSuiteById)
