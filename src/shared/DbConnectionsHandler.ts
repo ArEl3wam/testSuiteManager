@@ -11,8 +11,8 @@ export class DbConnectionHandler {
 
   private constructor() {
     const DB_URL: string = process.env["DB_URL"] || "mongodb://127.0.0.1:";
-    const LOGS_DB_PORT: string = process.env["LOGS_DB_PORT"] || "27017";
-    const USERS_DB_PORT: string = process.env["USERS_DB_PORT"] || "27018";
+    const LOGS_DB_PORT: string = process.env["LOGS_DB_PORT"] || "27651";
+    const USERS_DB_PORT: string = process.env["USERS_DB_PORT"] || "27650";
     this.logsDbConnection = mongoose.createConnection(
       `${DB_URL}${LOGS_DB_PORT}/`,
       {
