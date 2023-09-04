@@ -102,7 +102,7 @@ export async function listTestCases(listingOptions: TestCaseListingOptions, data
 
 export async function updateTestCase(testCaseId: string, updateData: TestCaseUpdate, databaseName: any) {
     try {
-        const testCase = await getTestCaseModel(databaseName).findByIdAndUpdate(testCaseId,flattenObject(updateData), { new: true,  fields: { __v: false }})
+        const testCase = await getTestCaseModel(databaseName).findByIdAndUpdate(testCaseId,updateData, { new: true,  fields: { __v: false }})
         if(!testCase) {
             throw new NotFoundError(`Test Case with id '${testCaseId}' was not found!`)
         }
