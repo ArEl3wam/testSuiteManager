@@ -7,9 +7,10 @@ import {
 } from "./../services/databaseService";
 import { getDBMetadataModel } from "./../model/DBMetadata";
 
-let connection = DbConnectionHandler.getInstance().getLogsDbConnection();
+// let connection = DbConnectionHandler.getInstance().getLogsDbConnection();
 
 function connectToAdmin() {
+  let connection = DbConnectionHandler.getInstance().getLogsDbConnection();
   connection = connection.useDb("admin");
   DbConnectionHandler.updateLogsDbConnection(connection);
 }
@@ -29,6 +30,7 @@ export async function openDatabaseConnection(
 ) {
   const request_db_name: String = request.body.databaseUrl.split("/")[3];
   try {
+    let connection = DbConnectionHandler.getInstance().getLogsDbConnection();
     connection = connection.useDb(request_db_name.toString());
     DbConnectionHandler.updateLogsDbConnection(connection);
     return response.status(200).json({
@@ -54,6 +56,7 @@ export async function deleteDatabase(
     });
   }
   try {
+    let connection = DbConnectionHandler.getInstance().getLogsDbConnection();
     connection = connection.useDb(db_name.toString());
     connection.db.dropDatabase();
     getDBMetadataModel().deleteOne({ DatabaseName: db_name.toString() }).exec();
