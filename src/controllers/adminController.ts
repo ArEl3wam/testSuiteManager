@@ -2,7 +2,6 @@ import express from "express";
 import { getUserModel } from "../model/User";
 import { AppError } from "../shared/errors";
 import catchAsync from "../shared/catchAsync";
-import { SolutionEnum } from "../model/User";
 
 export const getAllUsers = catchAsync(
   async (req: express.Request, res: express.Response) => {
@@ -58,15 +57,6 @@ export const updateUser = catchAsync(
     let { solutions, deletableDatabases } = req.body;
 
     solutions = solutions.map((solution: string) => solution.toUpperCase());
-    const containsInvalidSolution = solutions.some(
-      (solution: string) =>
-        !Object.values(SolutionEnum).includes(
-          solution.toUpperCase() as SolutionEnum
-        )
-    );
-
-    if (containsInvalidSolution)
-      return next(new AppError("Invalid solution type.", 401));
 
     if (solutions) user.solutions = solutions;
     if (deletableDatabases) user.deletableDatabases = deletableDatabases;
@@ -93,10 +83,3 @@ export const deleteUser = catchAsync(
   }
 );
 
-export const getAllSolutions = catchAsync(
-  async (req: any, res: express.Response) => {
-    res
-      .status(200)
-      .json({ status: "success", data: Object.values(SolutionEnum) });
-  }
-);

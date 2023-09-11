@@ -4,12 +4,6 @@ import isSiemensEmail from "../validators/isSiemensEmail";
 import jwt from "jsonwebtoken";
 import { DbConnectionHandler } from "../shared/DbConnectionsHandler";
 
-export enum SolutionEnum {
-  ETHERNET = "ETHERNET",
-  FIVEG = "5G",
-  OTN = "OTN",
-}
-
 export interface IUser {
   name: string;
   email: string;
@@ -65,7 +59,6 @@ const UserSchema = new mongoose.Schema<IUser>({
 
   solutions: {
     type: [String],
-    enum: Object.values(SolutionEnum),
     default: [],
   },
 
