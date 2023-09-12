@@ -7,7 +7,6 @@ export const getAllUsers = catchAsync(
   async (req: express.Request, res: express.Response) => {
     const queryBody = {
       isActive: req.query.activated,
-      isAdmin: false,
       isVerified: true,
     };
     const User = getUserModel();
