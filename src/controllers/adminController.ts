@@ -56,11 +56,8 @@ export const updateUser = catchAsync(
     if (!user) return next(new AppError("This user does not exist.", 401));
     let { solutions, deletableDatabases } = req.body;
 
-    solutions = solutions.map((solution: string) => solution.toUpperCase());
-
     if (solutions) user.solutions = solutions;
     if (deletableDatabases) user.deletableDatabases = deletableDatabases;
-    console.log(user);
 
     await user.save();
 
@@ -82,4 +79,3 @@ export const deleteUser = catchAsync(
     res.status(200).json({ status: "success", message: "User is deleted." });
   }
 );
-
