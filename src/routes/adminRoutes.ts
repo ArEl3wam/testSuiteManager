@@ -5,7 +5,6 @@ import {
   activateUser,
   updateUser,
   deleteUser,
-  getAllSolutions,
 } from "../controllers/adminController";
 
 export const adminRouter = express.Router();
@@ -18,5 +17,3 @@ adminRouter
   .get(activateUser)
   .patch(updateUser)
   .delete(deleteUser);
-
-adminRouter.route("/solutions").get(getAllSolutions);
