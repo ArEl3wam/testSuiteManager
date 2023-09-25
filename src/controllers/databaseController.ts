@@ -87,16 +87,21 @@ export async function AuthorizeDatabaseCreation(
     });
   }
 
-  if (!request.query.solutionName) {
-    request.query.solutionName = "ETHERNET";
+  if (request.query.databaseName?.toString().includes(".")) {
+    
+    return response.status(400).json({
+      status: "fail",
+      message: "invalid database name, database name should not contain '.'",
+    });
   }
 
-  // if (!request.query.solution) {
-  //     response.status(400).json({
-  //         status: 'fail',
-  //         message: 'invalid solution name'
-  //     });
-  // }
+  if (!request.query.solution) {
+      response.status(400).json({
+          status: 'fail',
+          message: 'invalid solution name'
+      });
+  }
+  
   const new_db: boolean = !(await checkDuplicateDatabaseName(request));
   if (new_db) {
     addToDbMetadata(request, response);
