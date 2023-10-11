@@ -14,7 +14,7 @@ import { shutdownRouter } from "./routes/shutdownRouter";
 import { statisticsRouter } from "./routes/statisticsRoutes";
 import { authRouter } from "./routes/authRoutes";
 import { adminRouter } from "./routes/adminRoutes";
-import { authMiddleware } from "./controllers/authController";
+import { authMiddleware, checkRequestedDatabase } from "./controllers/authController";
 import userRouter from "./routes/userRoutes";
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
@@ -45,7 +45,8 @@ export function createApp() {
   app.use(express.json({ limit: "16mb" }));
 
   app.use(cookieParser());
-  app.use(authMiddleware); // this must be before swapDatabaseConnection
+  app.use(authMiddleware);
+  app.use(checkRequestedDatabase)
   app.use(bodyParser.json());
   app.use(databaseRouter);
   app.use(TestSuiteRouter);

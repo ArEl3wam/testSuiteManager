@@ -4,6 +4,7 @@ import catchAsync from "../shared/catchAsync";
 import jwt from "jsonwebtoken";
 import { AppError } from "../shared/errors";
 import sendEmail from "../shared/email";
+import { getDBMetadataModel } from "../model/DBMetadata";
 
 export const signup = catchAsync(
   async (
@@ -141,3 +142,17 @@ export const verify = catchAsync(
       );
   }
 );
+
+export async function checkRequestedDatabase(request: express.Request, response: express.Response, next: express.NextFunction) {
+  if (request.method != 'GET') return next();
+
+  const databaseName = request.query.databaseName as string;
+  const solutionName = request.query.solution as string;
+  const DBMetadataModel = getDBMetadataModel();
+  const dbMetadata = await DBMetadataModel.findOne({ DatabaseName: databaseName, SolutionName: solutionName });
+  if (!dbMetadata) {
+      response.redirect(`${request.protocol}://${request.hostname}:${process.env.FRONTEND_PORT}/home`);
+  }
+  return next();
+
+}
