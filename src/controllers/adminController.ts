@@ -53,10 +53,9 @@ export const updateUser = catchAsync(
     const userId = req.params.id;
     const user = await User.findById(userId);
     if (!user) return next(new AppError("This user does not exist.", 401));
-    let { solutions, deletableDatabases, deletePermissions } = req.body;
+    let { solutions, deletePermissions } = req.body;
 
     if (solutions) user.solutions = solutions;
-    if (deletableDatabases) user.deletableDatabases = deletableDatabases;
     if (deletePermissions) user.deletePermissions = deletePermissions;
 
     await user.save();

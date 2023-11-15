@@ -14,7 +14,6 @@ export interface IUser {
   isVerified: boolean;
   solutions: string[];
   deletePermissions: string[];
-  deletableDatabases: string[];
 
   changedPasswordAfter: (timeStamp: Date) => boolean;
   getToken: (extra_payload?: object, token_options?: object) => string;
@@ -68,10 +67,6 @@ const UserSchema = new mongoose.Schema<IUser>({
     default: [],
   },
 
-  deletableDatabases: {
-    type: [String],
-    default: [],
-  },
 });
 
 UserSchema.pre("save", async function (next) {
