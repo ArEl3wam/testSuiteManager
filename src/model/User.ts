@@ -13,6 +13,7 @@ export interface IUser {
   isActive: boolean;
   isVerified: boolean;
   solutions: string[];
+  deletePermissions: string[];
   deletableDatabases: string[];
 
   changedPasswordAfter: (timeStamp: Date) => boolean;
@@ -58,6 +59,11 @@ const UserSchema = new mongoose.Schema<IUser>({
   },
 
   solutions: {
+    type: [String],
+    default: [],
+  },
+
+  deletePermissions: {
     type: [String],
     default: [],
   },

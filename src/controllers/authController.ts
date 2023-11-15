@@ -143,16 +143,21 @@ export const verify = catchAsync(
   }
 );
 
-export async function checkRequestedDatabase(request: express.Request, response: express.Response, next: express.NextFunction) {
-  if (request.method != 'GET') return next();
-  
-  const databaseName = request.query.databaseName as string;
-  if(!databaseName) return next()
-  const DBMetadataModel = getDBMetadataModel();
-  const dbMetadata = await DBMetadataModel.findOne({ DatabaseName: databaseName });
-  if (!dbMetadata) {
-    return response.json({message: "Invalid database"})  
-  } 
-  return next();
+export async function checkRequestedDatabase(
+  request: express.Request,
+  response: express.Response,
+  next: express.NextFunction
+) {
+  if (request.method != "GET") return next();
 
+  const databaseName = request.query.databaseName as string;
+  if (!databaseName) return next();
+  const DBMetadataModel = getDBMetadataModel();
+  const dbMetadata = await DBMetadataModel.findOne({
+    DatabaseName: databaseName,
+  });
+  if (!dbMetadata) {
+    return response.json({ message: "Invalid database" });
+  }
+  return next();
 }
